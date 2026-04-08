@@ -95,12 +95,11 @@ jobs:
             --token="${{ env.OPENSHIFT_TOKEN }}" \
             --insecure-skip-tls-verify=false
           oc project "${{ env.OCP_NAMESPACE }}-dev"
-          oc tag ${{ steps.push-image.outputs.registry-path }} ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}
 
       - name: Tag image into OpenShift
         run: |
           oc import-image ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }} \
-            --from=${{ needs.build-and-push.outputs.image-path }} \
+            --from=${{ steps.push-image.outputs.registry-path }} \
             --confirm \
             --reference-policy=local
 
