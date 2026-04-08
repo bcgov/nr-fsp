@@ -71,7 +71,7 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE }}
-            ${{ env.REGISTRY }}/${{ env.OCP_NAMESPACE }}-dev:latest
+            ${{ env.REGISTRY }}/${{ env.OCP_NAMESPACE }}-dev/test-hello:latest
 
   # ────────────────────────────────────────────────────────
   deploy:
