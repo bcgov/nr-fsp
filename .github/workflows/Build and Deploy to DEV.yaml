@@ -105,7 +105,7 @@ jobs:
 
       - name: Substitute image in manifest
         run: |
-          sed -i "s|IMAGE_PLACEHOLDER|${{ steps.push-image.outputs.registry-path }}|g" \
+          sed -i "s|IMAGE_PLACEHOLDER|image-registry.openshift-image-registry.svc:5000/${OCP_NAMESPACE}-dev/${APP_NAME}:${IMAGE_TAG}|g" \
             frontend/openshift/deployment.yaml
 
       - name: Apply manifests
