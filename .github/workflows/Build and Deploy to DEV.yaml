@@ -97,6 +97,13 @@ jobs:
           oc project "${{ env.OCP_NAMESPACE }}-dev"
           oc tag ${{ steps.push-image.outputs.registry-path }} ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}
 
+      - name: Tag image into OpenShift
+        run: |
+          oc import-image ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }} \
+            --from=${{ needs.build-and-push.outputs.image-path }} \
+            --confirm \
+            --reference-policy=local
+
       - name: Substitute image in manifest
         run: |
           sed -i "s|IMAGE_PLACEHOLDER|${{ needs.build-and-push.outputs.image }}|g" \
