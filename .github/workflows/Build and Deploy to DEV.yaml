@@ -15,7 +15,7 @@ env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
   IMAGE_REGISTRY_USER: ${{ github.actor }}
   IMAGE_REGISTRY_PASSWORD: ${{ github.token }}
-  IMAGE_TAGS: latest
+  IMAGE_TAG: latest
   APP_NAME: hello-world
 
 jobs:
@@ -59,7 +59,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.APP_NAME }}
-          tags: ${{ env.IMAGE_TAGS }}
+          tags: ${{ env.IMAGE_TAG }}
           context: ./frontend
           dockerfiles: |
             ./frontend/Dockerfile
@@ -95,7 +95,7 @@ jobs:
             --token="${{ env.OPENSHIFT_TOKEN }}" \
             --insecure-skip-tls-verify=false
           oc project "${{ env.OCP_NAMESPACE }}-dev"
-          oc tag ghcr.io/${{ github.repository_owner }}/hello-world@${{ needs.build-and-push.outputs.image }} hello-world:latest
+          oc tag ${{ steps.push-image.outputs.registry-path }} ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}
 
       - name: Substitute image in manifest
         run: |
