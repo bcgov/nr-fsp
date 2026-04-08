@@ -106,10 +106,10 @@ jobs:
       - name: Substitute image in manifest
         run: |
           sed -i "s|IMAGE_PLACEHOLDER|${{ needs.build-and-push.outputs.image }}|g" \
-            openshift/deployment.yaml
+            frontend/openshift/deployment.yaml
 
       - name: Apply manifests
-        run: oc apply -f openshift/deployment.yaml
+        run: oc apply -f frontend/openshift/deployment.yaml
 
       - name: Wait for rollout
         run: |
