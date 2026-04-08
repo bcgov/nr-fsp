@@ -12,6 +12,10 @@ env:
   OPENSHIFT_URL:   ${{ secrets.OPENSHIFT_URL }}     # https://api.<cluster>:6443
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}   # service-account token with deploy rights
   OCP_NAMESPACE:   ${{ secrets.OCP_NAMESPACE }}     # target namespace / project
+  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  IMAGE_REGISTRY_USER: ${{ github.actor }}
+  IMAGE_REGISTRY_PASSWORD: ${{ github.token }}
+  IMAGE_NAME: hello-world
 
 jobs:
   # ────────────────────────────────────────────────────────
@@ -49,29 +53,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Log in to container registry
+      - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.REGISTRY_USER }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set image metadata
+      - name: Extract image metadata
         id: meta
-        run: |
-          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-          IMAGE="${REGISTRY}/${OCP_NAMESPACE}:${SHORT_SHA}"
-          echo "image=${IMAGE}" >> $GITHUB_OUTPUT
-          echo "IMAGE=${IMAGE}" >> $GITHUB_ENV
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=,format=short
+            type=raw,value=latest
 
-      - name: Build and push image
-        uses: docker/build-push-action@v5
+      - name: Build and push to GHCR
+        id: build
+        uses: docker/build-push-action@v6
         with:
           context: ./frontend
           push: true
-          tags: |
-            ${{ env.IMAGE }}
-            ${{ env.REGISTRY }}/${{ env.OCP_NAMESPACE }}-dev/test-hello:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:latest
+          cache-to: type=inline
 
   # ────────────────────────────────────────────────────────
   deploy:
@@ -94,6 +101,7 @@ jobs:
             --token="${{ env.OPENSHIFT_TOKEN }}" \
             --insecure-skip-tls-verify=false
           oc project "${{ env.OCP_NAMESPACE }}-dev"
+          oc tag ghcr.io/${{ github.repository_owner }}/hello-world@${{ needs.build-and-push.outputs.image }} hello-world:latest
 
       - name: Substitute image in manifest
         run: |
