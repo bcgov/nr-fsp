@@ -115,7 +115,7 @@ jobs:
   deploy:
     name: Deploy to OpenShift
     runs-on: ubuntu-24.04
-    needs: build-and-push-frontend
+    needs: [build-and-push-frontend,build-and-push-backend]
     environment: dev
 
     steps:
@@ -135,9 +135,9 @@ jobs:
           
       - name: Tag backend image into OpenShift
         env:
-          REGISTRY_PATH: ${{ needs.build-and-push-backend.outputs.registry-path }}
+          REGISTRY_PATH_BACKEND: ${{ needs.build-and-push-backend.outputs.registry-path }}
         run: |
-          oc tag --source=docker $REGISTRY_PATH ${{ env.APP_NAME }}-backend:${{ env.IMAGE_TAG }} \
+          oc tag --source=docker $REGISTRY_PATH_BACKEND ${{ env.APP_NAME }}-backend:${{ env.IMAGE_TAG }} \
           --reference-policy=local
 
       - name: Substitute MIN_REPLICAS in backend manifest
