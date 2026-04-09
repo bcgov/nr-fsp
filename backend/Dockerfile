@@ -1,4 +1,4 @@
-FROM artifacts.developer.gov.bc.ca/docker-remote/maven:3.9.9-amazoncorretto-21-alpine AS build
+FROM maven:3.9.9-amazoncorretto-21-alpine AS build
 WORKDIR /workspace/app
 
 COPY api/pom.xml .
@@ -6,7 +6,7 @@ COPY api/src src
 RUN mvn package -DskipTests
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
-FROM artifacts.developer.gov.bc.ca/docker-remote/eclipse-temurin:21.0.9_10-jdk-alpine-3.23
+FROM eclipse-temurin:21.0.9_10-jdk-alpine-3.23
 
 RUN adduser -D -s /bin/sh spring
 RUN mkdir -p /logs
