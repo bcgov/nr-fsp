@@ -30,7 +30,7 @@ env:
 jobs:
   # https://github.com/redhat-actions/buildah-build#readme
   build-and-push-backend:
-    name: Lint & Test Frontend
+    name: Build Frontend Image & Push
     runs-on: ubuntu-24.04
     steps:
       - name: Build Backend from Dockerfile
@@ -55,6 +55,7 @@ jobs:
   test-frontend:
     name: Lint & Test Frontend
     runs-on: ubuntu-24.04
+    needs: build-and-push-backend
     steps:
       - uses: actions/checkout@v4
 
