@@ -29,8 +29,8 @@ env:
   SPRING_WEB_LOG_LEVEL: INFO
   APP_LOG_LEVEL: INFO
   SPRING_BOOT_AUTOCONFIG_LOG_LEVEL: INFO
-  SPRING_SHOW_REQUEST_DETAILS: false
-  SPRING_JPA_SHOW_SQL: false
+  SPRING_SHOW_REQUEST_DETAILS: "false"
+  SPRING_JPA_SHOW_SQL: "false"
   TOKEN_ISSUER_URL: ${{ secrets.TOKEN_ISSUER_URL }}
 
 jobs:
@@ -71,7 +71,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 25
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
