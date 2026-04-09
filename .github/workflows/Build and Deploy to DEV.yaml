@@ -34,7 +34,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Build Backend from Dockerfile
-        runs-on: ubuntu-24.04
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.APP_NAME }}-backend
