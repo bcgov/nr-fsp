@@ -3,12 +3,12 @@
 	admin off
 
 	# Caddy defaults to :443/:80; override to run unprivileged
-	http_port  8080
+	http_port  2015
 	https_port 8443
 }
 
-:8080 {
-	root * /srv/www
+:2015 {
+	root * /srv
 
 	# Serve static files; fall back to index.html for React Router
 	try_files {path} /index.html

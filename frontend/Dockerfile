@@ -1,27 +1,12 @@
-# ── Stage 1: Build ──────────────────────────────────────
-FROM node:20-alpine AS builder
-
-WORKDIR /app
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:22.17.1-alpine3.22 AS build-stage
+WORKDIR /frontend
 COPY package*.json ./
-RUN npm ci --silent
-COPY . .
+RUN npm install
+COPY ./ .
 RUN npm run build
 
-# ── Stage 2: Serve ──────────────────────────────────────
-# caddy:alpine runs as root by default, so we harden it for
-# OpenShift's restricted SCC (arbitrary non-root UID).
-FROM caddy:2-alpine
+FROM artifacts.developer.gov.bc.ca/docker-remote/caddy:2.4.6-alpine AS caddy-stage
 
-# Copy Caddyfile and built React app
+EXPOSE 2015
 COPY Caddyfile /etc/caddy/Caddyfile
-COPY --from=builder /app/build /srv/www
-
-# Caddy needs to write its data/config dirs.
-# Make them world-writable so any UID OpenShift assigns can use them.
-RUN mkdir -p /data /config \
-    && chown -R root:root /data /config /srv/www \
-    && chmod -R g=u   /data /config /srv/www
-
-EXPOSE 8080
-
-CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+COPY --from=build-stage /frontend/dist /srv

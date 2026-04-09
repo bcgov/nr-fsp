@@ -113,7 +113,7 @@ jobs:
 
       - name: Wait for rollout
         run: |
-          oc rollout status deployment/hello-world --timeout=120s
+          oc rollout restart status deployment/hello-world
 
       - name: Print route URL
         run: |

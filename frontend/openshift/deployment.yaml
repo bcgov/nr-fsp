@@ -21,7 +21,7 @@ spec:
           # Updated by the CI pipeline via kustomize / sed
           image: IMAGE_PLACEHOLDER
           ports:
-            - containerPort: 8080
+            - containerPort: 2015
           resources:
             requests:
               cpu: "50m"
@@ -32,13 +32,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /healthz
-              port: 8080
+              port: 2015
             initialDelaySeconds: 5
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /healthz
-              port: 8080
+              port: 2015
             initialDelaySeconds: 3
             periodSeconds: 5
           securityContext:
@@ -58,8 +58,8 @@ spec:
   selector:
     app: hello-world
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 2015
+      targetPort: 2015
 ---
 # Route (OpenShift-specific ingress)
 apiVersion: route.openshift.io/v1
@@ -71,7 +71,7 @@ spec:
     kind: Service
     name: hello-world
   port:
-    targetPort: 8080
+    targetPort: 2015
   tls:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
