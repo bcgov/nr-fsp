@@ -1,4 +1,4 @@
-# Hello World — React + OpenShift
+# Forest Stewardship Plan — React + OpenShift
 
 A minimal React app wired for CI/CD to OpenShift via GitHub Actions.
 
