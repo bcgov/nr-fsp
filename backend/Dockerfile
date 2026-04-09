@@ -1,8 +1,8 @@
 FROM maven:3.9.9-amazoncorretto-21-alpine AS build
 WORKDIR /workspace/app
 
-COPY backend/pom.xml .
-COPY backend/src src
+COPY pom.xml .
+COPY src src
 RUN mvn package -DskipTests
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
