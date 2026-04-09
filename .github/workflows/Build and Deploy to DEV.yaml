@@ -97,9 +97,11 @@ jobs:
           oc project "${{ env.OCP_NAMESPACE }}-dev"
 
       - name: Tag image into OpenShift
+        env:
+          REGISTRY_PATH: ${{ needs.build-and-push.outputs.registry-path }}
         run: |
           oc import-image ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }} \
-            --from=${{ needs.build-and-push.outputs.registry-path }} \
+            --from=$REGISTRY_PATH \
             --confirm \
             --reference-policy=local
 
