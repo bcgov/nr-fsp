@@ -19,10 +19,8 @@ COPY --from=builder /app/build /srv/www
 # Caddy needs to write its data/config dirs.
 # Make them world-writable so any UID OpenShift assigns can use them.
 RUN mkdir -p /data /config \
-    && chown -R 1001:0 /data /config /srv/www \
+    && chown -R root:root /data /config /srv/www \
     && chmod -R g=u   /data /config /srv/www
-
-USER 1001
 
 EXPOSE 8080
 
