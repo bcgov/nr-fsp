@@ -3,21 +3,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fsp
+  name: fsp-frontend
   labels:
-    app: fsp
+    app: fsp-frontend
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: fsp
+      app: fsp-frontend
   template:
     metadata:
       labels:
-        app: fsp
+        app: fsp-frontend
     spec:
       containers:
-        - name: fsp
+        - name: fsp-frontend
           # Updated by the CI pipeline via kustomize / sed
           image: IMAGE_PLACEHOLDER
           ports:
@@ -53,10 +53,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fsp
+  name: fsp-frontend
 spec:
   selector:
-    app: fsp
+    app: fsp-frontend
   ports:
     - name: http
       protocol: TCP
@@ -67,11 +67,11 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: fsp
+  name: fsp-frontend
 spec:
   to:
     kind: Service
-    name: fsp
+    name: fsp-frontend
   port:
     targetPort: http
   tls:

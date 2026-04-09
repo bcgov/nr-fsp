@@ -33,7 +33,7 @@ Set these in **Settings → Secrets and variables → Actions**:
 | Secret | Description |
 |---|---|
 | `REGISTRY` | Container registry hostname (e.g. `quay.io`) |
-| `REGISTRY_NS` | Image namespace/repository (e.g. `myorg/fsp`) |
+| `REGISTRY_NS` | Image namespace/repository (e.g. `myorg/fsp-frontend`) |
 | `REGISTRY_USER` | Registry login username |
 | `REGISTRY_PASSWORD` | Registry login password or token |
 | `OPENSHIFT_URL` | API server URL (e.g. `https://api.mycluster.example.com:6443`) |
