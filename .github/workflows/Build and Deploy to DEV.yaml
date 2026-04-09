@@ -100,11 +100,9 @@ jobs:
         env:
           REGISTRY_PATH: ${{ needs.build-and-push.outputs.registry-path }}
         run: |
-          oc import-image ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }} \
-          --from=$REGISTRY_PATH \
-          --confirm \
-          --force \
-          --reference-policy=local
+          oc tag $REGISTRY_PATH ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }} \
+          --reference-policy=local \
+          --force
 
       - name: Substitute image in manifest
         run: |
