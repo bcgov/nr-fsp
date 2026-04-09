@@ -139,6 +139,11 @@ jobs:
         run: |
           oc tag --source=docker $REGISTRY_PATH_BACKEND ${{ env.APP_NAME }}-backend:${{ env.IMAGE_TAG }} \
           --reference-policy=local
+          
+      - name: Substitute image in backend manifest
+        run: |
+          sed -i "s|<IMAGE_PLACEHOLDER>|image-registry.openshift-image-registry.svc:5000/${OCP_NAMESPACE}-dev/${APP_NAME}-backend:${IMAGE_TAG}|g" \
+            backend/openshift/deployment.yaml
 
       - name: Substitute MIN_REPLICAS in backend manifest
         run: |
