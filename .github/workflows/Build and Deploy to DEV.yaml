@@ -29,8 +29,8 @@ env:
   SPRING_WEB_LOG_LEVEL: INFO
   APP_LOG_LEVEL: INFO
   SPRING_BOOT_AUTOCONFIG_LOG_LEVEL: INFO
-  SPRING_SHOW_REQUEST_DETAILS: "false"
-  SPRING_JPA_SHOW_SQL: "false"
+  SPRING_SHOW_REQUEST_DETAILS: false
+  SPRING_JPA_SHOW_SQL: false
   TOKEN_ISSUER_URL: ${{ secrets.TOKEN_ISSUER_URL }}
 
 jobs:
@@ -208,12 +208,12 @@ jobs:
           
       - name: Substitute SPRING_SHOW_REQUEST_DETAILS in backend manifest
         run: |
-          sed -i "s|<SPRING_SHOW_REQUEST_DETAILS>|${SPRING_SHOW_REQUEST_DETAILS}|g" \
+          sed -i "s|<SPRING_SHOW_REQUEST_DETAILS>|"${SPRING_SHOW_REQUEST_DETAILS}"|g" \
             backend/openshift/deployment.yaml
           
       - name: Substitute SPRING_JPA_SHOW_SQL in backend manifest
         run: |
-          sed -i "s|<SPRING_JPA_SHOW_SQL>|${SPRING_JPA_SHOW_SQL}|g" \
+          sed -i "s|<SPRING_JPA_SHOW_SQL>|"${SPRING_JPA_SHOW_SQL}"|g" \
             backend/openshift/deployment.yaml
           
       - name: Substitute TOKEN_ISSUER_URL in backend manifest
