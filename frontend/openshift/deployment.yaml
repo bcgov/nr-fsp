@@ -58,7 +58,9 @@ spec:
   selector:
     app: hello-world
   ports:
-    - port: 2015
+    - name: http
+      protocol: TCP
+      port: 2015
       targetPort: 2015
 ---
 # Route (OpenShift-specific ingress)
@@ -71,7 +73,7 @@ spec:
     kind: Service
     name: hello-world
   port:
-    targetPort: 2015
+    targetPort: http
   tls:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
