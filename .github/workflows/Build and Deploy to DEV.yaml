@@ -118,9 +118,13 @@ jobs:
       - name: Apply manifests
         run: oc apply -f frontend/openshift/deployment.yaml
 
+      - name: Perform Rollout
+        run: |
+          oc rollout restart deployment/hello-world
+          
       - name: Wait for rollout
         run: |
-          oc rollout restart status deployment/hello-world
+          oc rollout status deployment/hello-world
 
       - name: Print route URL
         run: |
