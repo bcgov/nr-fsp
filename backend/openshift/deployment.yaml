@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: fsp-backend
-          image: image-registry.openshift-image-registry.svc:5000/${NAMESPACE}/${REPO_NAME}-${BRANCH}:${TAG}
+          image: <IMAGE_PLACEHOLDER>
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
