@@ -100,9 +100,8 @@ jobs:
         env:
           REGISTRY_PATH: ${{ needs.build-and-push.outputs.registry-path }}
         run: |
-          oc tag $REGISTRY_PATH ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }} \
-          --reference-policy=local \
-          --force
+          oc tag --source=docker $REGISTRY_PATH ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }} \
+          --reference-policy=local
 
       - name: Substitute image in manifest
         run: |
