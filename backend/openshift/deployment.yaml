@@ -1,0 +1,116 @@
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fsp-backend
+  labels:
+    app: fsp-backend
+spec:
+  replicas: <MIN_REPLICAS>
+  selector:
+    matchLabels:
+      app: fsp-backend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  template:
+    metadata:
+      labels:
+        app: fsp-backend
+      annotations:
+        prometheus.io/path: /actuator/prometheus
+        prometheus.io/port: '8080'
+        prometheus.io/scrape: 'true'
+    spec:
+      containers:
+        - name: fsp-backend
+          image: image-registry.openshift-image-registry.svc:5000/${NAMESPACE}/${REPO_NAME}-${BRANCH}:${TAG}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: DB_JDBC_CONNECT_STRING
+              value: <DB_JDBC_CONNECT_STRING>
+            - name: DB_USER
+              value: <DB_USER>
+            - name: DB_PWD
+              value: <DB_PWD>
+          resources:
+            requests:
+              cpu: <MIN_CPU>
+              memory: <MIN_MEM>
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 5
+            successThreshold: 1
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 20
+            successThreshold: 1
+          volumeMounts:
+            - name: tls-certs
+              mountPath: "/etc/tls-certs"
+              readOnly: true
+            - name: log-storage
+              mountPath: /logs
+            - name: app-storage
+              mountPath: /temp
+      volumes:
+        - name: tls-certs
+          secret:
+            secretName: fsp-backend-cert
+        - name: log-storage
+          emptyDir: {}
+        - name: app-storage
+          emptyDir: {}
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: fsp-backend
+  labels:
+    app: fsp-backend
+  annotations:
+    service.alpha.openshift.io/serving-cert-secret-name: fsp-backend-cert
+spec:
+  selector:
+    app: fsp-backend
+  ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+---
+# Route (OpenShift-specific ingress)
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: fsp-backend-cpu-autoscaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: fsp-backend
+  minReplicas: <MIN_REPLICAS>
+  maxReplicas: <MAX_REPLICAS>
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 200
+

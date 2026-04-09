@@ -11,17 +11,48 @@ env:
   OPENSHIFT_URL:   ${{ secrets.OPENSHIFT_URL }}     # https://api.<cluster>:6443
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}   # service-account token with deploy rights
   OCP_NAMESPACE:   ${{ secrets.OCP_NAMESPACE }}     # target namespace / project
+  DB_JDBC_CONNECT_STRING: ${{ secrets.DB_JDBC_CONNECT_STRING }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PWD: ${{ secrets.DB_PWD }}
+  
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
   IMAGE_REGISTRY_USER: ${{ github.actor }}
   IMAGE_REGISTRY_PASSWORD: ${{ github.token }}
+  
   IMAGE_TAG: latest
   APP_NAME: fsp
+  MIN_REPLICAS: 1
+  MAX_REPLICAS: 2
+  MIN_CPU: 300m
+  MIN_MEM: 1G
+  
 
 jobs:
+  # https://github.com/redhat-actions/buildah-build#readme
+  build-and-push-backend:
+    - name: Build Backend from Dockerfile
+      runs-on: ubuntu-24.04
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: ${{ env.APP_NAME }}-backend
+        tags: ${{ env.IMAGE_TAG }}
+        context: ./backend
+        dockerfiles: |
+          ./Dockerfile
+
+    - name: Push backend to GHCR
+      id: push-image-backend
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-image-backend.outputs.image }}
+        tags: ${{ steps.build-image-backend.outputs.tags }}
+        registry: ${{ env.IMAGE_REGISTRY }}
+        username: ${{ env.IMAGE_REGISTRY_USER }}
+        password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
   # ────────────────────────────────────────────────────────
-  test:
-    name: Lint & Test
-    runs-on: ubuntu-latest
+  test-frontend:
+    name: Lint & Test Frontend
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -40,10 +71,10 @@ jobs:
         run: npm test -- --watchAll=false --passWithNoTests
 
   # ────────────────────────────────────────────────────────
-  build-and-push:
+  build-and-push-frontend:
     name: Build Frontend Image & Push
-    runs-on: ubuntu-latest
-    needs: test
+    runs-on: ubuntu-24.04
+    needs: test-frontend
     # Only push on merges to main (not PRs)
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
@@ -53,8 +84,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build from Dockerfile
-        id: build-image
+      - name: Build Frontend from Dockerfile
+        id: build-image-frontend
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.APP_NAME }}-frontend
@@ -63,12 +94,12 @@ jobs:
           dockerfiles: |
             ./frontend/Dockerfile
 
-      - name: Push to GHCR
-        id: push-image
+      - name: Push frontend to GHCR
+        id: push-image-frontend
         uses: redhat-actions/push-to-registry@v2
         with:
-          image: ${{ steps.build-image.outputs.image }}
-          tags: ${{ steps.build-image.outputs.tags }}
+          image: ${{ steps.build-image-frontend.outputs.image }}
+          tags: ${{ steps.build-image-frontend.outputs.tags }}
           registry: ${{ env.IMAGE_REGISTRY }}
           username: ${{ env.IMAGE_REGISTRY_USER }}
           password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
@@ -76,8 +107,8 @@ jobs:
   # ────────────────────────────────────────────────────────
   deploy:
     name: Deploy to OpenShift
-    runs-on: ubuntu-latest
-    needs: build-and-push
+    runs-on: ubuntu-24.04
+    needs: build-and-push-frontend
     environment: dev
 
     steps:
@@ -94,31 +125,79 @@ jobs:
             --token="${{ env.OPENSHIFT_TOKEN }}" \
             --insecure-skip-tls-verify=false
           oc project "${{ env.OCP_NAMESPACE }}-dev"
-
-      - name: Tag image into OpenShift
+          
+      - name: Tag backend image into OpenShift
         env:
-          REGISTRY_PATH: ${{ needs.build-and-push.outputs.registry-path }}
+          REGISTRY_PATH: ${{ needs.build-and-push-backend.outputs.registry-path }}
+        run: |
+          oc tag --source=docker $REGISTRY_PATH ${{ env.APP_NAME }}-backend:${{ env.IMAGE_TAG }} \
+          --reference-policy=local
+
+      - name: Substitute MIN_REPLICAS in backend manifest
+        run: |
+          sed -i "s|<MIN_REPLICAS>|${MIN_REPLICAS}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute MAX_REPLICAS in backend manifest
+        run: |
+          sed -i "s|<MAX_REPLICAS>|${MAX_REPLICAS}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute DB_JDBC_CONNECT_STRING in backend manifest
+        run: |
+          sed -i "s|<DB_JDBC_CONNECT_STRING>|${DB_JDBC_CONNECT_STRING}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute DB_USER in backend manifest
+        run: |
+          sed -i "s|<DB_USER>|${DB_USER}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute DB_PWD in backend manifest
+        run: |
+          sed -i "s|<DB_PWD>|${DB_PWD}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute MIN_CPU in backend manifest
+        run: |
+          sed -i "s|<MIN_CPU>|${MIN_CPU}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute MIN_MEM in backend manifest
+        run: |
+          sed -i "s|<MIN_MEM>|${MIN_MEM}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Apply backend manifests
+        run: oc apply -f backend/openshift/deployment.yaml
+
+      - name: Perform backend rollout
+        run: |
+          oc rollout restart deployment/fsp-backend
+
+      - name: Wait for backend rollout
+        run: |
+          oc rollout status deployment/fsp-backend
+          
+      - name: Tag frontend image into OpenShift
+        env:
+          REGISTRY_PATH: ${{ needs.build-and-push-frontend.outputs.registry-path }}
         run: |
           oc tag --source=docker $REGISTRY_PATH ${{ env.APP_NAME }}-frontend:${{ env.IMAGE_TAG }} \
           --reference-policy=local
 
-      - name: Substitute image in manifest
+      - name: Substitute image in frontend manifest
         run: |
-          sed -i "s|IMAGE_PLACEHOLDER|image-registry.openshift-image-registry.svc:5000/${OCP_NAMESPACE}-dev/${APP_NAME}-frontend:${IMAGE_TAG}|g" \
+          sed -i "s|<IMAGE_PLACEHOLDER>|image-registry.openshift-image-registry.svc:5000/${OCP_NAMESPACE}-dev/${APP_NAME}-frontend:${IMAGE_TAG}|g" \
             frontend/openshift/deployment.yaml
 
-      - name: Apply manifests
+      - name: Apply frontend manifests
         run: oc apply -f frontend/openshift/deployment.yaml
 
-      - name: Perform Rollout
+      - name: Perform frontend rollout
         run: |
-          oc rollout restart deployment/fsp
+          oc rollout restart deployment/fsp-frontend
           
-      - name: Wait for rollout
+      - name: Wait for frontend rollout
         run: |
-          oc rollout status deployment/fsp
-
-      - name: Print route URL
-        run: |
-          URL=$(oc get route fsp -o jsonpath='{.spec.host}')
-          echo "✅ Deployed to https://${URL}"
+          oc rollout status deployment/fsp-frontend

@@ -19,7 +19,7 @@ spec:
       containers:
         - name: fsp-frontend
           # Updated by the CI pipeline via kustomize / sed
-          image: IMAGE_PLACEHOLDER
+          image: <IMAGE_PLACEHOLDER>
           ports:
             - containerPort: 2015
           resources:
