@@ -25,7 +25,13 @@ env:
   MAX_REPLICAS: 2
   MIN_CPU: 300m
   MIN_MEM: 1G
-  
+  SPRING_SECURITY_LOG_LEVEL: INFO
+  SPRING_WEB_LOG_LEVEL: INFO
+  APP_LOG_LEVEL: INFO
+  SPRING_BOOT_AUTOCONFIG_LOG_LEVEL: INFO
+  SPRING_SHOW_REQUEST_DETAILS: false
+  SPRING_JPA_SHOW_SQL: false
+  TOKEN_ISSUER_URL: ${{ secrets.TOKEN_ISSUER_URL }}
 
 jobs:
   # https://github.com/redhat-actions/buildah-build#readme
@@ -178,6 +184,46 @@ jobs:
       - name: Substitute MIN_MEM in backend manifest
         run: |
           sed -i "s|<MIN_MEM>|${MIN_MEM}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute SPRING_SECURITY_LOG_LEVEL in backend manifest
+        run: |
+          sed -i "s|<SPRING_SECURITY_LOG_LEVEL>|${SPRING_SECURITY_LOG_LEVEL}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute SPRING_WEB_LOG_LEVEL in backend manifest
+        run: |
+          sed -i "s|<SPRING_WEB_LOG_LEVEL>|${SPRING_WEB_LOG_LEVEL}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute APP_LOG_LEVEL in backend manifest
+        run: |
+          sed -i "s|<APP_LOG_LEVEL>|${APP_LOG_LEVEL}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute SPRING_BOOT_AUTOCONFIG_LOG_LEVEL in backend manifest
+        run: |
+          sed -i "s|<SPRING_BOOT_AUTOCONFIG_LOG_LEVEL>|${SPRING_BOOT_AUTOCONFIG_LOG_LEVEL}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute SPRING_SHOW_REQUEST_DETAILS in backend manifest
+        run: |
+          sed -i "s|<SPRING_SHOW_REQUEST_DETAILS>|${SPRING_SHOW_REQUEST_DETAILS}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute SPRING_JPA_SHOW_SQL in backend manifest
+        run: |
+          sed -i "s|<SPRING_JPA_SHOW_SQL>|${SPRING_JPA_SHOW_SQL}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute TOKEN_ISSUER_URL in backend manifest
+        run: |
+          sed -i "s|<TOKEN_ISSUER_URL>|${TOKEN_ISSUER_URL}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute SPRING_SHOW_REQUEST_DETAILS in backend manifest
+        run: |
+          sed -i "s|<SPRING_SHOW_REQUEST_DETAILS>|${SPRING_SHOW_REQUEST_DETAILS}|g" \
             backend/openshift/deployment.yaml
           
       - name: Apply backend manifests

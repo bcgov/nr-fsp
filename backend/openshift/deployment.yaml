@@ -39,6 +39,20 @@ spec:
               value: <DB_USER>
             - name: DB_PWD
               value: <DB_PWD>
+            - name: SPRING_SECURITY_LOG_LEVEL
+              value: <SPRING_SECURITY_LOG_LEVEL>
+            - name: SPRING_WEB_LOG_LEVEL
+              value: <SPRING_WEB_LOG_LEVEL>
+            - name: APP_LOG_LEVEL
+              value: <APP_LOG_LEVEL>
+            - name: SPRING_BOOT_AUTOCONFIG_LOG_LEVEL
+              value: <SPRING_BOOT_AUTOCONFIG_LOG_LEVEL>
+            - name: SPRING_SHOW_REQUEST_DETAILS
+              value: <SPRING_SHOW_REQUEST_DETAILS>
+            - name: SPRING_JPA_SHOW_SQL
+              value: <SPRING_JPA_SHOW_SQL>
+            - name: TOKEN_ISSUER_URL
+              value: <TOKEN_ISSUER_URL>
           resources:
             requests:
               cpu: <MIN_CPU>
