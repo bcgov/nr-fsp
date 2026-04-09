@@ -41,7 +41,7 @@ jobs:
           tags: ${{ env.IMAGE_TAG }}
           context: ./backend
           dockerfiles: |
-            ./Dockerfile
+            ./backend/Dockerfile
   
       - name: Push backend to GHCR
         id: push-image-backend
