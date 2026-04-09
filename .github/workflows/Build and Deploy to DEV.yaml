@@ -30,7 +30,7 @@ env:
 jobs:
   # https://github.com/redhat-actions/buildah-build#readme
   build-and-push-backend:
-    name: Build Frontend Image & Push
+    name: Build Backend Image & Push
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
