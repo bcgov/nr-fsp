@@ -30,25 +30,28 @@ env:
 jobs:
   # https://github.com/redhat-actions/buildah-build#readme
   build-and-push-backend:
-    - name: Build Backend from Dockerfile
-      runs-on: ubuntu-24.04
-      uses: redhat-actions/buildah-build@v2
-      with:
-        image: ${{ env.APP_NAME }}-backend
-        tags: ${{ env.IMAGE_TAG }}
-        context: ./backend
-        dockerfiles: |
-          ./Dockerfile
-
-    - name: Push backend to GHCR
-      id: push-image-backend
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build-image-backend.outputs.image }}
-        tags: ${{ steps.build-image-backend.outputs.tags }}
-        registry: ${{ env.IMAGE_REGISTRY }}
-        username: ${{ env.IMAGE_REGISTRY_USER }}
-        password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
+    name: Lint & Test Frontend
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Build Backend from Dockerfile
+        runs-on: ubuntu-24.04
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.APP_NAME }}-backend
+          tags: ${{ env.IMAGE_TAG }}
+          context: ./backend
+          dockerfiles: |
+            ./Dockerfile
+  
+      - name: Push backend to GHCR
+        id: push-image-backend
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image-backend.outputs.image }}
+          tags: ${{ steps.build-image-backend.outputs.tags }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+          username: ${{ env.IMAGE_REGISTRY_USER }}
+          password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
   # ────────────────────────────────────────────────────────
   test-frontend:
     name: Lint & Test Frontend
