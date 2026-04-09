@@ -41,7 +41,7 @@ jobs:
 
   # ────────────────────────────────────────────────────────
   build-and-push:
-    name: Build Image & Push
+    name: Build Frontend Image & Push
     runs-on: ubuntu-latest
     needs: test
     # Only push on merges to main (not PRs)
@@ -57,7 +57,7 @@ jobs:
         id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
-          image: ${{ env.APP_NAME }}
+          image: ${{ env.APP_NAME }}-frontend
           tags: ${{ env.IMAGE_TAG }}
           context: ./frontend
           dockerfiles: |
@@ -99,12 +99,12 @@ jobs:
         env:
           REGISTRY_PATH: ${{ needs.build-and-push.outputs.registry-path }}
         run: |
-          oc tag --source=docker $REGISTRY_PATH ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }} \
+          oc tag --source=docker $REGISTRY_PATH ${{ env.APP_NAME }}-frontend:${{ env.IMAGE_TAG }} \
           --reference-policy=local
 
       - name: Substitute image in manifest
         run: |
-          sed -i "s|IMAGE_PLACEHOLDER|image-registry.openshift-image-registry.svc:5000/${OCP_NAMESPACE}-dev/${APP_NAME}:${IMAGE_TAG}|g" \
+          sed -i "s|IMAGE_PLACEHOLDER|image-registry.openshift-image-registry.svc:5000/${OCP_NAMESPACE}-dev/${APP_NAME}-frontend:${IMAGE_TAG}|g" \
             frontend/openshift/deployment.yaml
 
       - name: Apply manifests
