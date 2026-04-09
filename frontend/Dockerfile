@@ -1,5 +1,5 @@
 # ── Stage 1: Build ──────────────────────────────────────
-FROM node:20-alpine AS builder
+FROM node:25-alpine AS builder
 
 WORKDIR /app
 COPY package*.json ./
@@ -8,7 +8,7 @@ COPY . .
 RUN npm run build
 
 # ── Stage 2: Serve ──────────────────────────────────────
-FROM artifacts.developer.gov.bc.ca/docker-remote/caddy:2.4.6-alpine AS caddy-stage
+FROM caddy:2.11.2-alpine AS caddy-stage
 
 EXPOSE 2015
 COPY Caddyfile /etc/caddy/Caddyfile
