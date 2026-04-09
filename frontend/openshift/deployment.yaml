@@ -3,21 +3,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-world
+  name: fsp
   labels:
-    app: hello-world
+    app: fsp
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: hello-world
+      app: fsp
   template:
     metadata:
       labels:
-        app: hello-world
+        app: fsp
     spec:
       containers:
-        - name: hello-world
+        - name: fsp
           # Updated by the CI pipeline via kustomize / sed
           image: IMAGE_PLACEHOLDER
           ports:
@@ -53,10 +53,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello-world
+  name: fsp
 spec:
   selector:
-    app: hello-world
+    app: fsp
   ports:
     - name: http
       protocol: TCP
@@ -67,11 +67,11 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: hello-world
+  name: fsp
 spec:
   to:
     kind: Service
-    name: hello-world
+    name: fsp
   port:
     targetPort: http
   tls:
