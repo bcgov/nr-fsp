@@ -1,10 +1,12 @@
 package ca.bc.gov.nrs.fsp.api.mapper;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 /**
  * The type String mapper.
  */
+@Component
 public class StringMapper {
 
   /**

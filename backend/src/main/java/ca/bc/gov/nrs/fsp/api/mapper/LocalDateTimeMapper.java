@@ -1,11 +1,14 @@
 package ca.bc.gov.nrs.fsp.api.mapper;
 
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
  * The type Local date time mapper.
  */
+@Component
 public class LocalDateTimeMapper {
 
   /**
