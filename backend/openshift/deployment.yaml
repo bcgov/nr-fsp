@@ -26,7 +26,7 @@ spec:
         prometheus.io/scrape: 'true'
     spec:
       initContainers:
-        - name: ${NAME}-init
+        - name: fsp-backend-init
           image: ghcr.io/bcgov/nr-forest-client/common:prod
           imagePullPolicy: Always
           env:
