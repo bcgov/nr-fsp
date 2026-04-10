@@ -150,4 +150,18 @@ spec:
         target:
           type: Utilization
           averageUtilization: 200
-
+---
+# PVC for Keystore
+- kind: PersistentVolumeClaim
+  apiVersion: v1
+  metadata:
+    labels:
+      app: fsp-backend-api
+    name: fsp-backend-api-cert
+  spec:
+    accessModes:
+      - ReadWriteMany
+    resources:
+      requests:
+        storage: 50mi
+    storageClassName: netapp-file-standard
