@@ -25,6 +25,24 @@ spec:
         prometheus.io/port: '8080'
         prometheus.io/scrape: 'true'
     spec:
+      initContainers:
+        - name: ${NAME}-init
+          image: ghcr.io/bcgov/nr-forest-client/common:prod
+          imagePullPolicy: Always
+          env:
+            - name: ORACLEDB_HOST
+              value: <ORACLEDB_HOST>
+            - name: ORACLEDB_SECRET
+              value: <ORACLEDB_SECRET>
+            - name: ORACLEDB_PORT
+              value: "1543"
+          volumeMounts:
+            - name: fsp-backend-api
+              mountPath: /cert
+          resources:
+            requests:
+              cpu: 200m
+              memory: 300Mi
       containers:
         - name: fsp-backend
           image: <IMAGE_PLACEHOLDER>

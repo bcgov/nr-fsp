@@ -14,6 +14,8 @@ env:
   DB_JDBC_CONNECT_STRING: ${{ secrets.DB_JDBC_CONNECT_STRING }}
   DB_USER: ${{ secrets.DB_USER }}
   DB_PWD: ${{ secrets.DB_PWD }}
+  ORACLEDB_HOST: ${{ secrets.ORACLEDB_HOST }}
+  ORACLEDB_SECRET: ${{ secrets.ORACLEDB_SECRET }}
   
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
   IMAGE_REGISTRY_USER: ${{ github.actor }}
@@ -164,6 +166,16 @@ jobs:
       - name: Substitute DB_JDBC_CONNECT_STRING in backend manifest
         run: |
           sed -i "s|<DB_JDBC_CONNECT_STRING>|${DB_JDBC_CONNECT_STRING}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute ORACLEDB_HOST in backend manifest
+        run: |
+          sed -i "s|<ORACLEDB_HOST>|${ORACLEDB_HOST}|g" \
+            backend/openshift/deployment.yaml
+          
+      - name: Substitute ORACLEDB_SECRET in backend manifest
+        run: |
+          sed -i "s|<ORACLEDB_SECRET>|${ORACLEDB_SECRET}|g" \
             backend/openshift/deployment.yaml
           
       - name: Substitute DB_USER in backend manifest
