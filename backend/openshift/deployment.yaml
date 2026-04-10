@@ -71,6 +71,8 @@ spec:
               value: "<SPRING_JPA_SHOW_SQL>"
             - name: TOKEN_ISSUER_URL
               value: <TOKEN_ISSUER_URL>
+            - name: ORACLEDB_SECRET
+              value: <ORACLEDB_SECRET>
           resources:
             requests:
               cpu: <MIN_CPU>
