@@ -31,9 +31,9 @@ spec:
           imagePullPolicy: Always
           env:
             - name: ORACLEDB_HOST
-              value: <ORACLEDB_HOST>
+              value: <DB_HOST>
             - name: ORACLEDB_SECRET
-              value: <ORACLEDB_SECRET>
+              value: <KEYSTORE_SECRET>
             - name: ORACLEDB_PORT
               value: "1543"
           volumeMounts:
