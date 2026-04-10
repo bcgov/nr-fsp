@@ -54,9 +54,15 @@ spec:
             - name: DB_JDBC_CONNECT_STRING
               value: <DB_JDBC_CONNECT_STRING>
             - name: DB_USER
-              value: <DB_USER>
+              valueFrom:
+                secretKeyRef:
+                  name: fsp-backend-secret
+                  key: DB_USER
             - name: DB_PWD
-              value: <DB_PWD>
+              valueFrom:
+                secretKeyRef:
+                  name: fsp-backend-secret
+                  key: DB_PWD
             - name: SPRING_SECURITY_LOG_LEVEL
               value: <SPRING_SECURITY_LOG_LEVEL>
             - name: SPRING_WEB_LOG_LEVEL
@@ -71,8 +77,11 @@ spec:
               value: "<SPRING_JPA_SHOW_SQL>"
             - name: TOKEN_ISSUER_URL
               value: <TOKEN_ISSUER_URL>
-            - name: ORACLEDB_SECRET
-              value: <ORACLEDB_SECRET>
+            - name: KEYSTORE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: fsp-backend-secret
+                  key: KEYSTORE_SECRET
           resources:
             requests:
               cpu: <MIN_CPU>
@@ -167,3 +176,16 @@ spec:
     requests:
       storage: 50Mi
   storageClassName: netapp-file-standard
+---
+# Secrets
+apiVersion: v1
+kind: Secret
+metadata:
+  name: fsp-backend-secret
+  labels:
+    app: fsp-backend
+type: Opaque
+stringData:
+  DB_USER: <DB_USER>
+  DB_PWD: <DB_PWD>
+  KEYSTORE_SECRET: <KEYSTORE_SECRET>
