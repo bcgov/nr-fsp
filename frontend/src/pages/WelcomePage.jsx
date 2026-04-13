@@ -25,7 +25,7 @@ export default function WelcomePage({ userName }) {
       <h2 className="welcome-subhead">What do you want to do?</h2>
       <ul className="welcome-list">
         <li>To search for any FSP that has passed through the system, click <Link to="/search"><strong>Search</strong></Link></li>
-        <li>To display a list of all FSPs submitted in your district, click <Link to="/inbox"><strong>InBox</strong></Link></li>
+        <li>To display a list of all FSPs submitted in your district, click <Link to="/inbox"><strong>Inbox</strong></Link></li>
         <li>To prepare and submit an FSP on line, select <Link to="/fsp/information"><strong>FSP → FSP Information</strong></Link></li>
         <li>To submit an FSP as an XML/GML file, select <Link to="/data-submission/xml"><strong>Data Submission → XML Submission</strong></Link></li>
       </ul>

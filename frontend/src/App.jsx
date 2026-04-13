@@ -51,7 +51,7 @@ function LoginPage({ onLogin }) {
         <div className="login-card__divider"><span>or</span></div>
 
         <button type="button" onClick={onLogin} className="login-card__btn login-card__btn--secondary">
-          <img src="/BCID_H_RGB_pos.png" alt="" aria-hidden="true" className="login-card__btn-icon login-card__btn-icon--bcid" />
+          <img src="/bcid-192x192.png" alt="" aria-hidden="true" className="login-card__btn-icon login-card__btn-icon--bcid" />
           Log in with Business BCeID
         </button>
 
@@ -88,7 +88,7 @@ function AppShell({ isLoggedIn, userName, onLogin, onLogout }) {
           <Route path="/links/mapview"  element={<WelcomePage userName={userName} />} />
           <Route path="/links/cims"     element={<WelcomePage userName={userName} />} />
 
-          {/* InBox */}
+          {/* Inbox */}
           <Route path="/inbox"          element={<InboxPage />} />
 
           {/* FSP */}

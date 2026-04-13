@@ -40,7 +40,7 @@ export default function InboxPage() {
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   return (
-    <PageLayout screenId="FSP200" title="InBox">
+    <PageLayout screenId="FSP200" title="Inbox">
       <div className="form-section">
         <div className="search-grid">
           <Select id="orgUnit" labelText="Organization Unit" value={form.orgUnit} onChange={e => set('orgUnit', e.target.value)}>

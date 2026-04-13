@@ -19,9 +19,9 @@ const NAV_ITEMS = [
     ],
   },
   {
-    label: 'InBox',
+    label: 'Inbox',
     children: [
-      { label: 'InBox', to: '/inbox' },
+      { label: 'Inbox', to: '/inbox' },
     ],
   },
   {
