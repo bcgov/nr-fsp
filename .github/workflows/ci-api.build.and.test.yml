@@ -10,7 +10,7 @@ on:
       - 'fix/*'
       - 'Fix/*'
     paths:
-      - 'api/**'
+      - 'backend/**'
   pull_request:
     branches: [ main ]
     paths:
