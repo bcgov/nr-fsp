@@ -3,7 +3,26 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import BCGovHeader from './components/Header';
 import NavBar from './components/NavBar';
 import BCGovFooter from './components/Footer';
-import PlaceholderPage from './pages/PlaceholderPage';
+
+// Pages
+import WelcomePage            from './pages/WelcomePage';
+import SearchPage             from './pages/SearchPage';
+import InboxPage              from './pages/InboxPage';
+import FspInformationPage     from './pages/FspInformationPage';
+import AmendInformationPage   from './pages/AmendInformationPage';
+import ExtensionRequestPage   from './pages/ExtensionRequestPage';
+import ExtensionSummaryPage   from './pages/ExtensionSummaryPage';
+import ReplaceInformationPage from './pages/ReplaceInformationPage';
+import AttachmentsPage        from './pages/AttachmentsPage';
+import StockingStandardsPage  from './pages/StockingStandardsPage';
+import FduMapPage             from './pages/FduMapPage';
+import IdentifiedAreasPage    from './pages/IdentifiedAreasPage';
+import WorkflowPage           from './pages/WorkflowPage';
+import HistoryPage            from './pages/HistoryPage';
+import DistrictNotificationPage from './pages/DistrictNotificationPage';
+import XmlSubmissionPage      from './pages/XmlSubmissionPage';
+import JcrsReportsPage        from './pages/JcrsReportsPage';
+
 import './App.css';
 
 // ── Login Page ─────────────────────────────────────────────
@@ -12,11 +31,7 @@ function LoginPage({ onLogin }) {
     <main className="login-page" id="main-content">
       <div className="login-card">
         <div className="login-card__logo-wrap">
-          <img
-            src="/BCID_H_RGB_pos.png"
-            alt="Government of British Columbia"
-            className="login-card__logo"
-          />
+          <img src="/BCID_H_RGB_pos.png" alt="Government of British Columbia" className="login-card__logo" />
         </div>
         <h1 className="login-card__title">Forest Stewardship Plan</h1>
         <p className="login-card__subtitle">
@@ -36,7 +51,7 @@ function LoginPage({ onLogin }) {
         <div className="login-card__divider"><span>or</span></div>
 
         <button type="button" onClick={onLogin} className="login-card__btn login-card__btn--secondary">
-          <img src="/bcid-192x192.png" alt="" aria-hidden="true" className="login-card__btn-icon login-card__btn-icon--bcid" />
+          <img src="/BCID_H_RGB_pos.png" alt="" aria-hidden="true" className="login-card__btn-icon login-card__btn-icon--bcid" />
           Log in with Business BCeID
         </button>
 
@@ -48,7 +63,7 @@ function LoginPage({ onLogin }) {
   );
 }
 
-// ── Shell wraps header + nav + routes + footer ─────────────
+// ── App Shell ──────────────────────────────────────────────
 function AppShell({ isLoggedIn, userName, onLogin, onLogout }) {
   return (
     <div className="app-shell">
@@ -63,38 +78,43 @@ function AppShell({ isLoggedIn, userName, onLogin, onLogout }) {
 
       {isLoggedIn ? (
         <Routes>
-          {/* Default */}
-          <Route path="/" element={<Navigate to="/search" replace />} />
+          <Route path="/"               element={<Navigate to="/welcome" replace />} />
+          <Route path="/welcome"        element={<WelcomePage userName={userName} />} />
 
           {/* Search */}
-          <Route path="/search" element={<PlaceholderPage title="Search" description="Search for FSPs and related records." />} />
-          <Route path="/links/fta"     element={<PlaceholderPage title="FTA" />} />
-          <Route path="/links/results" element={<PlaceholderPage title="RESULTS" />} />
-          <Route path="/links/mapview" element={<PlaceholderPage title="MapView" />} />
-          <Route path="/links/cims"    element={<PlaceholderPage title="CIMS" />} />
+          <Route path="/search"         element={<SearchPage />} />
+          <Route path="/links/fta"      element={<WelcomePage userName={userName} />} />
+          <Route path="/links/results"  element={<WelcomePage userName={userName} />} />
+          <Route path="/links/mapview"  element={<WelcomePage userName={userName} />} />
+          <Route path="/links/cims"     element={<WelcomePage userName={userName} />} />
 
-          {/* Inbox */}
-          <Route path="/inbox" element={<PlaceholderPage title="Inbox" description="View your incoming FSP submissions and notifications." />} />
+          {/* InBox */}
+          <Route path="/inbox"          element={<InboxPage />} />
 
           {/* FSP */}
-          <Route path="/fsp/information"      element={<PlaceholderPage title="FSP Information"      description="Administrative details for each FSP. FSPs and amendments are created and submitted here." />} />
-          <Route path="/fsp/attachments"      element={<PlaceholderPage title="Attachments"          description="Attach and view documents related to specific sections of the FSP or amendment." />} />
-          <Route path="/fsp/stocking-standards" element={<PlaceholderPage title="Stocking Standards" description="Summary list of Stocking Standards associated to the current FSP/Amendment." />} />
-          <Route path="/fsp/fdu-map"          element={<PlaceholderPage title="FDU/Map"              description="List of all Forest Development Units (FDU) included in an FSP." />} />
-          <Route path="/fsp/identified-areas" element={<PlaceholderPage title="Identified Areas/Map" description="List of all Identified/Declared Areas included in an FSP." />} />
-          <Route path="/fsp/workflow"         element={<PlaceholderPage title="Workflow"             description="Track an FSP/Amendment's stages of review and log approvals or rejections." />} />
+          <Route path="/fsp/information"        element={<FspInformationPage />} />
+          <Route path="/fsp/amend-information"  element={<AmendInformationPage />} />
+          <Route path="/fsp/extension-request"  element={<ExtensionRequestPage />} />
+          <Route path="/fsp/extension-summary"  element={<ExtensionSummaryPage />} />
+          <Route path="/fsp/replace-information" element={<ReplaceInformationPage />} />
+          <Route path="/fsp/attachments"        element={<AttachmentsPage />} />
+          <Route path="/fsp/stocking-standards" element={<StockingStandardsPage />} />
+          <Route path="/fsp/fdu-map"            element={<FduMapPage />} />
+          <Route path="/fsp/identified-areas"   element={<IdentifiedAreasPage />} />
+          <Route path="/fsp/workflow"           element={<WorkflowPage />} />
+          <Route path="/fsp/history"            element={<HistoryPage />} />
 
           {/* Data Submission */}
-          <Route path="/data-submission/xml" element={<PlaceholderPage title="XML Submission" description="Submit FSP data via XML." />} />
+          <Route path="/data-submission/xml"    element={<XmlSubmissionPage />} />
 
           {/* Admin */}
-          <Route path="/admin/district-notification" element={<PlaceholderPage title="District Notification" description="Manage district notifications." />} />
+          <Route path="/admin/district-notification" element={<DistrictNotificationPage />} />
 
           {/* Reports */}
-          <Route path="/reports/jcrs" element={<PlaceholderPage title="JCRS Reports" description="View and generate JCRS reports." />} />
+          <Route path="/reports/jcrs"           element={<JcrsReportsPage />} />
 
           {/* Catch-all */}
-          <Route path="*" element={<Navigate to="/search" replace />} />
+          <Route path="*" element={<Navigate to="/welcome" replace />} />
         </Routes>
       ) : (
         <LoginPage onLogin={onLogin} />
@@ -108,7 +128,7 @@ function AppShell({ isLoggedIn, userName, onLogin, onLogout }) {
 // ── App ────────────────────────────────────────────────────
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName] = useState('Jane Smith');
+  const [userName]  = useState('Jane Smith');
 
   return (
     <BrowserRouter>

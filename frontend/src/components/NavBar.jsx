@@ -8,19 +8,20 @@ const NAV_ITEMS = [
     children: [
       { label: 'Search', to: '/search' },
       {
-        label: 'Links', children: [
+        label: 'Links',
+        children: [
           { label: 'FTA',     to: '/links/fta' },
           { label: 'RESULTS', to: '/links/results' },
           { label: 'MapView', to: '/links/mapview' },
           { label: 'CIMS',    to: '/links/cims' },
-        ]
+        ],
       },
     ],
   },
   {
-    label: 'Inbox',
+    label: 'InBox',
     children: [
-      { label: 'Inbox', to: '/inbox' },
+      { label: 'InBox', to: '/inbox' },
     ],
   },
   {
@@ -32,6 +33,7 @@ const NAV_ITEMS = [
       { label: 'FDU/Map',              to: '/fsp/fdu-map' },
       { label: 'Identified Areas/Map', to: '/fsp/identified-areas' },
       { label: 'Workflow',             to: '/fsp/workflow' },
+      { label: 'History',              to: '/fsp/history' },
     ],
   },
   {
@@ -54,7 +56,6 @@ const NAV_ITEMS = [
   },
 ];
 
-// ── Single dropdown menu item ──────────────────────────────
 function NavItem({ item }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -65,7 +66,6 @@ function NavItem({ item }) {
          : c.children?.some(gc => location.pathname.startsWith(gc.to))
   );
 
-  // Close on outside click
   useEffect(() => {
     function handler(e) {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
@@ -75,10 +75,7 @@ function NavItem({ item }) {
   }, []);
 
   return (
-    <li
-      ref={ref}
-      className={`navbar__item ${open ? 'is-open' : ''} ${isActive ? 'is-active' : ''}`}
-    >
+    <li ref={ref} className={`navbar__item ${open ? 'is-open' : ''} ${isActive ? 'is-active' : ''}`}>
       <button
         className="navbar__trigger"
         onClick={() => setOpen(v => !v)}
@@ -95,11 +92,7 @@ function NavItem({ item }) {
       {open && (
         <ul className="navbar__dropdown" role="menu">
           {item.children.map(child => (
-            <DropdownItem
-              key={child.label}
-              item={child}
-              onClose={() => setOpen(false)}
-            />
+            <DropdownItem key={child.label} item={child} onClose={() => setOpen(false)} />
           ))}
         </ul>
       )}
@@ -107,15 +100,12 @@ function NavItem({ item }) {
   );
 }
 
-// ── Dropdown item (supports nested sub-menus) ──────────────
 function DropdownItem({ item, onClose }) {
   const [open, setOpen] = useState(false);
-  const ref = useRef(null);
 
   if (item.children) {
     return (
       <li
-        ref={ref}
         className={`navbar__dropdown-item navbar__dropdown-item--has-children ${open ? 'is-open' : ''}`}
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
@@ -140,27 +130,19 @@ function DropdownItem({ item, onClose }) {
 
   return (
     <li className="navbar__dropdown-item" role="none">
-      <Link
-        to={item.to}
-        className="navbar__dropdown-link"
-        role="menuitem"
-        onClick={onClose}
-      >
+      <Link to={item.to} className="navbar__dropdown-link" role="menuitem" onClick={onClose}>
         {item.label}
       </Link>
     </li>
   );
 }
 
-// ── NavBar ─────────────────────────────────────────────────
 export default function NavBar() {
   return (
     <nav className="navbar" aria-label="Main navigation">
       <div className="navbar__container">
         <ul className="navbar__list" role="list">
-          {NAV_ITEMS.map(item => (
-            <NavItem key={item.label} item={item} />
-          ))}
+          {NAV_ITEMS.map(item => <NavItem key={item.label} item={item} />)}
         </ul>
       </div>
     </nav>
