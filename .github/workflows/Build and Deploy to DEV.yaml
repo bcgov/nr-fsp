@@ -3,8 +3,6 @@ name: Build & Deploy to OpenShift
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 env:
   # ── Configure these in your repo's Settings → Secrets & Variables ──
