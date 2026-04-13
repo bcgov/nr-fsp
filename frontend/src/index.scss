@@ -1,0 +1,62 @@
+// Disable ALL local font-face generation from Carbon
+@use '@carbon/styles/scss/config' with (
+  $css--font-face: false
+);
+
+// Pull in all Carbon component styles (no fonts emitted)
+@use '@carbon/react';
+
+// ── BC Sans — served from /public/fonts ───────────────────
+@font-face {
+  font-family: 'BCSans';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/2023_03_14_BCSans-Light_2g.woff2') format('woff2'),
+       url('/fonts/2023_03_14_BCSans-Light_2g.woff') format('woff');
+}
+@font-face {
+  font-family: 'BCSans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/2023_01_01_BCSans-Regular_2f.woff2') format('woff2'),
+       url('/fonts/2023_01_01_BCSans-Regular_2f.woff') format('woff');
+}
+@font-face {
+  font-family: 'BCSans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/2023_01_01_BCSans-Italic_2f.woff2') format('woff2'),
+       url('/fonts/2023_01_01_BCSans-Italic_2f.woff') format('woff');
+}
+@font-face {
+  font-family: 'BCSans';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/2023_01_01_BCSans-LightItalic_2f.woff2') format('woff2'),
+       url('/fonts/2023_01_01_BCSans-LightItalic_2f.woff') format('woff');
+}
+@font-face {
+  font-family: 'BCSans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/2023_01_01_BCSans-Bold_2f.woff2') format('woff2'),
+       url('/fonts/2023_01_01_BCSans-Bold_2f.woff') format('woff');
+}
+@font-face {
+  font-family: 'BCSans';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/2023_01_01_BCSans-BoldItalic_2f.woff2') format('woff2'),
+       url('/fonts/2023_01_01_BCSans-BoldItalic_2f.woff') format('woff');
+}
+
+// ── Apply BC Sans everywhere, overriding Carbon's IBM Plex ─
+html, body, * {
+  font-family: 'BCSans', 'Noto Sans', Arial, sans-serif !important;
+}

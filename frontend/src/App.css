@@ -1,156 +1,165 @@
-/* ── Tokens ────────────────────────────────────────────── */
-:root {
-  --bg:        #080810;
-  --surface:   rgba(255,255,255,0.04);
-  --border:    rgba(255,255,255,0.08);
-  --accent:    #7b61ff;
-  --accent2:   #00e5c3;
-  --text:      #e8e8f0;
-  --muted:     rgba(232,232,240,0.45);
-  --radius:    20px;
-}
-
-/* ── Layout ────────────────────────────────────────────── */
-.app {
+/* ── App Shell ─────────────────────────────────────────────
+   flex column + min-height means the footer always sits at
+   the bottom; if content overflows the viewport the browser
+   adds a scrollbar naturally.
+──────────────────────────────────────────────────────────── */
+.app-shell {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+}
+
+/* ── Login Page ────────────────────────────────────────── */
+.login-page {
+  flex: 1;                  /* fills space between header and footer */
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-.app--visible { opacity: 1; }
-
-/* ── Grid background ───────────────────────────────────── */
-.grid-bg {
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(123,97,255,0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(123,97,255,0.07) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+  padding: 3rem 1.25rem;
+  background: #f4f4f4;
 }
 
-/* ── Orbs ──────────────────────────────────────────────── */
-.orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  pointer-events: none;
-  animation: drift 12s ease-in-out infinite alternate;
-}
-.orb--a {
-  width: 520px; height: 520px;
-  background: radial-gradient(circle, rgba(123,97,255,0.25), transparent 70%);
-  top: -160px; left: -120px;
-}
-.orb--b {
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(0,229,195,0.18), transparent 70%);
-  bottom: -120px; right: -80px;
-  animation-duration: 16s;
-  animation-direction: alternate-reverse;
-}
-@keyframes drift {
-  from { transform: translate(0, 0) scale(1); }
-  to   { transform: translate(40px, 30px) scale(1.06); }
-}
-
-/* ── Stage / Card ──────────────────────────────────────── */
-.stage {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 3.5rem 4rem;
-  max-width: 540px;
+.login-card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  padding: 3rem 2.5rem;
+  max-width: 440px;
   width: 100%;
-  backdrop-filter: blur(24px);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.04) inset,
-    0 32px 80px rgba(0,0,0,0.6);
-  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: 0.15s;
-}
-@keyframes rise {
-  from { opacity: 0; transform: translateY(28px) scale(0.97); }
-  to   { opacity: 1; transform: none; }
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  text-align: center;
 }
 
-/* ── Typography ────────────────────────────────────────── */
-.eyebrow {
+/* Blue band behind the logo so the white "rev" PNG shows
+   while waiting for the colour "pos" file to be added.
+   Once BCID_H_RGB_pos.png is in /public, remove this block. */
+.login-card__logo-wrap {
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.login-card__logo {
+  width: 290px;
+  height: auto;
   display: block;
-  font-size: 0.7rem;
-  font-family: 'Courier New', monospace;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent2);
-  margin-bottom: 1.6rem;
 }
 
-.headline {
-  font-size: clamp(2.8rem, 6vw, 4.2rem);
-  font-weight: 400;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-  color: var(--text);
-  margin-bottom: 1.4rem;
-}
-.headline em {
-  font-style: italic;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.login-card__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #161616;
+  margin-bottom: 0.75rem;
 }
 
-.body {
-  font-size: 1rem;
-  line-height: 1.7;
-  color: var(--muted);
+.login-card__subtitle {
+  font-size: 0.875rem;
+  color: #525252;
+  line-height: 1.6;
   margin-bottom: 2rem;
 }
-.body code {
-  color: var(--accent2);
-  background: rgba(0,229,195,0.08);
-  padding: 0.1em 0.4em;
-  border-radius: 4px;
-  font-size: 0.9em;
-}
 
-/* ── Pills ─────────────────────────────────────────────── */
-.pill-row {
+/* Login button */
+.login-card__btn {
   display: flex;
-  gap: 0.6rem;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.85em 1.5em;
+  background: #0f62fe;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
 }
-.pill {
-  font-family: 'Courier New', monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.05em;
-  padding: 0.35em 0.9em;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  background: rgba(255,255,255,0.03);
-}
-.pill--accent {
-  border-color: rgba(123,97,255,0.4);
-  color: var(--accent);
-  background: rgba(123,97,255,0.08);
+.login-card__btn:hover  { background: #0043ce; }
+.login-card__btn:focus-visible {
+  outline: 3px solid #0f62fe;
+  outline-offset: 2px;
+  background: #0043ce;
 }
 
-/* ── Responsive ────────────────────────────────────────── */
+.login-card__btn-icon {
+  flex-shrink: 0;
+}
+
+.login-card__help {
+  margin-top: 1.25rem;
+  font-size: 0.8rem;
+  color: #6f6f6f;
+}
+
+.login-card__link {
+  color: #0f62fe;
+  text-decoration: underline;
+}
+.login-card__link:hover { color: #0043ce; }
+
+/* ── Dashboard Page ────────────────────────────────────── */
+.dashboard-page {
+  flex: 1;                  /* fills space between nav and footer */
+  padding: 2.5rem 1.25rem;
+  background: #f4f4f4;
+}
+
+.dashboard-page__container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-page__heading {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #161616;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-page__sub {
+  font-size: 0.875rem;
+  color: #525252;
+}
+
+/* ── Responsive ── */
 @media (max-width: 480px) {
-  .card { padding: 2.4rem 2rem; }
+  .login-card { padding: 2rem 1.5rem; }
+}
+
+/* ── BCeID secondary button ────────────────────────────── */
+.login-card__btn--secondary {
+  background: #ffffff;
+  color: #003366;
+  border: 2px solid #003366;
+}
+.login-card__btn--secondary:hover {
+  background: #f0f4f8;
+}
+.login-card__btn--secondary:focus-visible {
+  outline: 3px solid #003366;
+  outline-offset: 2px;
+  background: #f0f4f8;
+}
+
+.login-card__btn-icon--bcid {
+  height: 20px;
+  width: auto;
+}
+
+/* ── Divider between buttons ───────────────────────────── */
+.login-card__divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.85rem 0;
+  color: #8d8d8d;
+  font-size: 0.8rem;
+}
+.login-card__divider::before,
+.login-card__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e0e0e0;
 }

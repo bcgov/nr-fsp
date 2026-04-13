@@ -1,0 +1,30 @@
+.placeholder-page {
+  flex: 1;
+  padding: 2.5rem 1.25rem;
+  background: #f4f4f4;
+}
+.placeholder-page__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-top: 4px solid #003366;
+  padding: 2rem 2.5rem;
+}
+.placeholder-page__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #003366;
+  margin-bottom: 0.5rem;
+}
+.placeholder-page__desc {
+  font-size: 0.9rem;
+  color: #525252;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+.placeholder-page__body {
+  color: #6f6f6f;
+  font-size: 0.9rem;
+}
