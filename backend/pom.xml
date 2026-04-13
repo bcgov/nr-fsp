@@ -135,10 +135,6 @@
       <artifactId>shedlock-provider-jdbc-template</artifactId>
       <version>${shedlock.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
     <!-- Micrometer core dependency  -->
     <dependency>
       <groupId>io.micrometer</groupId>
