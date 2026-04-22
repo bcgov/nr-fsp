@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './auth';
 import BCGovHeader from './components/Header';
 import NavBar from './components/NavBar';
 import BCGovFooter from './components/Footer';
@@ -26,7 +27,9 @@ import JcrsReportsPage        from './pages/JcrsReportsPage';
 import './App.css';
 
 // ── Login Page ─────────────────────────────────────────────
-function LoginPage({ onLogin }) {
+function LoginPage() {
+  const { login } = useAuth();
+
   return (
     <main className="login-page" id="main-content">
       <div className="login-card">
@@ -38,7 +41,7 @@ function LoginPage({ onLogin }) {
           Sign in with your BC Government account to access and manage your plans.
         </p>
 
-        <button type="button" onClick={onLogin} className="login-card__btn">
+        <button type="button" onClick={login} className="login-card__btn">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21" width="20" height="20" aria-hidden="true" className="login-card__btn-icon">
             <rect x="0"  y="0"  width="10" height="10" fill="#f25022"/>
             <rect x="11" y="0"  width="10" height="10" fill="#7fba00"/>
@@ -50,9 +53,9 @@ function LoginPage({ onLogin }) {
 
         <div className="login-card__divider"><span>or</span></div>
 
-        <button type="button" onClick={onLogin} className="login-card__btn login-card__btn--secondary">
+        <button type="button" onClick={login} className="login-card__btn login-card__btn--secondary">
           <img src="/bcid-192x192.png" alt="" aria-hidden="true" className="login-card__btn-icon login-card__btn-icon--bcid" />
-          Log in with Business BCeID
+          Log in with BCeID
         </button>
 
         <p className="login-card__help">
@@ -63,22 +66,53 @@ function LoginPage({ onLogin }) {
   );
 }
 
+// ── Loading Screen ─────────────────────────────────────────
+function LoadingScreen() {
+  return (
+    <main className="login-page" id="main-content">
+      <div className="login-card" style={{ textAlign: 'center' }}>
+        <p style={{ color: '#525252', fontSize: '0.95rem' }}>Signing you in…</p>
+      </div>
+    </main>
+  );
+}
+
 // ── App Shell ──────────────────────────────────────────────
-function AppShell({ isLoggedIn, userName, onLogin, onLogout }) {
+function AppShell() {
+  const { isAuthenticated, isLoading, user, login, logout } = useAuth();
+
+  // Derive display name from id_token claims
+  const userName = user?.name
+    || (user?.given_name && user?.family_name ? `${user.given_name} ${user.family_name}` : null)
+    || user?.preferred_username
+    || user?.email
+    || '';
+
+  if (isLoading) {
+    return (
+      <div className="app-shell">
+        <BCGovHeader isLoggedIn={false} userName="" onLoginClick={login} onLogoutClick={logout} />
+        <LoadingScreen />
+        <BCGovFooter />
+      </div>
+    );
+  }
+
   return (
     <div className="app-shell">
       <BCGovHeader
-        isLoggedIn={isLoggedIn}
+        isLoggedIn={isAuthenticated}
         userName={userName}
-        onLoginClick={onLogin}
-        onLogoutClick={onLogout}
+        onLoginClick={login}
+        onLogoutClick={logout}
       />
 
-      {isLoggedIn && <NavBar />}
+      {isAuthenticated && <NavBar />}
 
-      {isLoggedIn ? (
+      {isAuthenticated ? (
         <Routes>
           <Route path="/"               element={<Navigate to="/welcome" replace />} />
+          <Route path="/auth/callback"  element={<Navigate to="/welcome" replace />} />
           <Route path="/welcome"        element={<WelcomePage userName={userName} />} />
 
           {/* Search */}
@@ -117,7 +151,7 @@ function AppShell({ isLoggedIn, userName, onLogin, onLogout }) {
           <Route path="*" element={<Navigate to="/welcome" replace />} />
         </Routes>
       ) : (
-        <LoginPage onLogin={onLogin} />
+        <LoginPage />
       )}
 
       <BCGovFooter />
@@ -127,17 +161,11 @@ function AppShell({ isLoggedIn, userName, onLogin, onLogout }) {
 
 // ── App ────────────────────────────────────────────────────
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName]  = useState('Jane Smith');
-
   return (
     <BrowserRouter>
-      <AppShell
-        isLoggedIn={isLoggedIn}
-        userName={userName}
-        onLogin={() => setIsLoggedIn(true)}
-        onLogout={() => setIsLoggedIn(false)}
-      />
+      <AuthProvider>
+        <AppShell />
+      </AuthProvider>
     </BrowserRouter>
   );
 }
