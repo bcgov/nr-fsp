@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Select, SelectItem, DatePicker, DatePickerInput, Button, DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '@carbon/react';
 import { Download, Launch } from '@carbon/react/icons';
 import PageLayout from './PageLayout';
@@ -12,7 +12,15 @@ const REPORT_TYPES = [
   { value: 'FSP_DISTRICT', label: 'District Activity Report' },
 ];
 
-const MOCK_REPORTS = [
+interface ReportRow {
+  id: string;
+  name: string;
+  generatedDate: string;
+  generatedBy: string;
+  format: string;
+}
+
+const MOCK_REPORTS: ReportRow[] = [
   { id: '1', name: 'FSP Status Summary',       generatedDate: '2025-04-01', generatedBy: 'jsmith',  format: 'PDF' },
   { id: '2', name: 'FSP Amendment Report',     generatedDate: '2025-03-15', generatedBy: 'mbrown',  format: 'XLSX' },
   { id: '3', name: 'District Activity Report', generatedDate: '2025-02-28', generatedBy: 'twilliams', format: 'PDF' },
@@ -27,7 +35,7 @@ const HEADERS = [
 
 export default function JcrsReportsPage() {
   const [reportType, setReportType] = useState('');
-  const [results, setResults]       = useState(null);
+  const [results, setResults]       = useState<ReportRow[] | null>(null);
 
   return (
     <PageLayout screenId="RPT" title="JCRS Reports">

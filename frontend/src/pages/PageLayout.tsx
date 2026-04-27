@@ -1,7 +1,13 @@
-import React from 'react';
+import { ReactNode } from 'react';
 import './PageLayout.css';
 
-export default function PageLayout({ title, screenId, children }) {
+interface PageLayoutProps {
+  title: string;
+  screenId: string;
+  children: ReactNode;
+}
+
+export default function PageLayout({ title, screenId, children }: PageLayoutProps) {
   return (
     <main className="page-layout" id="main-content">
       <div className="page-layout__container">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { RadioButton, RadioButtonGroup, Button, FileUploader, DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '@carbon/react';
 import { View, TrashCan } from '@carbon/react/icons';
 import PageLayout from './PageLayout';
@@ -19,7 +19,7 @@ const HEADERS = [
 ];
 
 export default function AttachmentsPage() {
-  const [display, setDisplay] = useState('N');
+  const [display, setDisplay] = useState<string>('N');
 
   return (
     <PageLayout screenId="FSP400" title="Attachments">
@@ -27,7 +27,7 @@ export default function AttachmentsPage() {
       <FspTabStrip />
 
       <div className="form-section">
-        <RadioButtonGroup legendText="Display" name="display" valueSelected={display} onChange={setDisplay} orientation="horizontal">
+        <RadioButtonGroup legendText="Display" name="display" valueSelected={display} onChange={v => setDisplay(v as string)} orientation="horizontal">
           <RadioButton labelText="Amendment 1" value="N" id="dispN" />
           <RadioButton labelText="All Current and In Effect/Approved Attachments (view only)" value="Y" id="dispY" />
         </RadioButtonGroup>

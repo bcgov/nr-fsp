@@ -1,8 +1,24 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './NavBar.css';
 
-const NAV_ITEMS = [
+interface NavLeaf {
+  label: string;
+  to: string;
+}
+
+interface NavBranch {
+  label: string;
+  children: Array<NavLeaf | NavBranch>;
+}
+
+type NavNode = NavLeaf | NavBranch;
+
+function isBranch(node: NavNode): node is NavBranch {
+  return 'children' in node;
+}
+
+const NAV_ITEMS: NavBranch[] = [
   {
     label: 'Search',
     children: [
@@ -56,19 +72,20 @@ const NAV_ITEMS = [
   },
 ];
 
-function NavItem({ item }) {
+function NavItem({ item }: { item: NavBranch }) {
   const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+  const ref = useRef<HTMLLIElement>(null);
   const location = useLocation();
 
-  const isActive = item.children?.some(c =>
-    c.to ? location.pathname.startsWith(c.to)
-         : c.children?.some(gc => location.pathname.startsWith(gc.to))
+  const isActive = item.children.some(c =>
+    isBranch(c)
+      ? c.children.some(gc => !isBranch(gc) && location.pathname.startsWith(gc.to))
+      : location.pathname.startsWith(c.to)
   );
 
   useEffect(() => {
-    function handler(e) {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
@@ -100,10 +117,15 @@ function NavItem({ item }) {
   );
 }
 
-function DropdownItem({ item, onClose }) {
+interface DropdownItemProps {
+  item: NavNode;
+  onClose: () => void;
+}
+
+function DropdownItem({ item, onClose }: DropdownItemProps) {
   const [open, setOpen] = useState(false);
 
-  if (item.children) {
+  if (isBranch(item)) {
     return (
       <li
         className={`navbar__dropdown-item navbar__dropdown-item--has-children ${open ? 'is-open' : ''}`}

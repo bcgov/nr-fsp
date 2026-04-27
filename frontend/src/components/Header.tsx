@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './Header.css';
 
 const BCGovLogo = () => (
@@ -9,7 +9,14 @@ const BCGovLogo = () => (
   />
 );
 
-export default function Header({ onLoginClick, isLoggedIn, userName, onLogoutClick }) {
+interface HeaderProps {
+  isLoggedIn: boolean;
+  userName?: string;
+  onLoginClick?: () => void;
+  onLogoutClick?: () => void;
+}
+
+export default function Header({ onLoginClick, isLoggedIn, userName, onLogoutClick }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (

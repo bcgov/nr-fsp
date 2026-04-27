@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   TextInput, Select, SelectItem, DatePicker, DatePickerInput,
   Button, DataTable, TableContainer, Table, TableHead, TableRow,
@@ -31,7 +31,19 @@ const APPROVAL_OPTIONS = [
   { value: 'N', label: 'No' },
 ];
 
-const MOCK_RESULTS = [
+interface SearchResult {
+  id: string;
+  amendNo: string;
+  name: string;
+  amendName: string;
+  status: string;
+  orgUnit: string;
+  effectiveDate: string;
+  expiryDate: string;
+  holder: string;
+}
+
+const MOCK_RESULTS: SearchResult[] = [
   { id: '10001', amendNo: '0', name: 'Okanagan FSP 2023', amendName: '—', status: 'APP', orgUnit: 'DPG', effectiveDate: '2023-04-01', expiryDate: '2028-03-31', holder: 'Tolko Industries' },
   { id: '10002', amendNo: '1', name: 'Skeena FSP 2022',   amendName: 'Boundary Amend', status: 'SUB', orgUnit: 'DSE', effectiveDate: '2022-06-15', expiryDate: '2027-06-14', holder: 'Canfor Corporation' },
   { id: '10003', amendNo: '0', name: 'Cariboo FSP 2021',  amendName: '—', status: 'DFT', orgUnit: 'DQU', effectiveDate: '—', expiryDate: '—', holder: 'West Fraser Mills' },
@@ -49,16 +61,29 @@ const HEADERS = [
   { key: 'holder',        header: 'Agreement Holder' },
 ];
 
-const STATUS_TAG = { APP: 'green', SUB: 'blue', DFT: 'gray', REJ: 'red', EXP: 'warm-gray' };
+const STATUS_TAG: Record<string, string> = { APP: 'green', SUB: 'blue', DFT: 'gray', REJ: 'red', EXP: 'warm-gray' };
+
+interface SearchForm {
+  orgUnit: string;
+  fspId: string;
+  status: string;
+  fspName: string;
+  amendName: string;
+  dateType: string;
+  holder: string;
+  approval: string;
+}
+
+const EMPTY_FORM: SearchForm = { orgUnit: '', fspId: '', status: '', fspName: '', amendName: '', dateType: 'INITIATION', holder: '', approval: '' };
 
 export default function SearchPage() {
-  const [form, setForm]       = useState({ orgUnit: '', fspId: '', status: '', fspName: '', amendName: '', dateType: 'INITIATION', holder: '', approval: '' });
-  const [results, setResults] = useState(null);
+  const [form, setForm]       = useState<SearchForm>(EMPTY_FORM);
+  const [results, setResults] = useState<SearchResult[] | null>(null);
 
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const set = <K extends keyof SearchForm>(k: K, v: SearchForm[K]) => setForm(f => ({ ...f, [k]: v }));
 
   const handleSearch = () => setResults(MOCK_RESULTS);
-  const handleClear  = () => { setForm({ orgUnit: '', fspId: '', status: '', fspName: '', amendName: '', dateType: 'INITIATION', holder: '', approval: '' }); setResults(null); };
+  const handleClear  = () => { setForm(EMPTY_FORM); setResults(null); };
 
   return (
     <PageLayout screenId="FSP100" title="Search">

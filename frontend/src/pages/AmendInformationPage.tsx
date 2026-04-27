@@ -1,16 +1,24 @@
-import React, { useState } from 'react';
-import { RadioButton, RadioButtonGroup, Button, TextArea, Checkbox } from '@carbon/react';
+import { useState } from 'react';
+import { RadioButton, RadioButtonGroup, Button, TextArea } from '@carbon/react';
 import { Save, Reset } from '@carbon/react/icons';
 import PageLayout from './PageLayout';
 import { FspTombstone, FspTabStrip } from './FspShared';
 import './PageLayout.css';
 
+interface AmendForm {
+  fduUpdate: string;
+  areasUpdate: string;
+  stockingUpdate: string;
+  approvalRequired: string;
+  summaryOfChanges: string;
+}
+
 export default function AmendInformationPage() {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<AmendForm>({
     fduUpdate: 'N', areasUpdate: 'N', stockingUpdate: 'N',
     approvalRequired: 'N', summaryOfChanges: '',
   });
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const set = <K extends keyof AmendForm>(k: K, v: AmendForm[K]) => setForm(f => ({ ...f, [k]: v }));
 
   return (
     <PageLayout screenId="FSP301" title="Amendment Information">
@@ -20,15 +28,15 @@ export default function AmendInformationPage() {
       <div className="form-section">
         <div className="form-section__title">Does this amendment change any of the following?</div>
         <div className="radio-stack">
-          <RadioButtonGroup legendText="FDU Changes" name="fduUpdate" valueSelected={form.fduUpdate} onChange={v => set('fduUpdate', v)} orientation="horizontal">
+          <RadioButtonGroup legendText="FDU Changes" name="fduUpdate" valueSelected={form.fduUpdate} onChange={v => set('fduUpdate', v as string)} orientation="horizontal">
             <RadioButton labelText="Yes" value="Y" id="fduY" />
             <RadioButton labelText="No"  value="N" id="fduN" />
           </RadioButtonGroup>
-          <RadioButtonGroup legendText="Identified/Declared Area Changes" name="areasUpdate" valueSelected={form.areasUpdate} onChange={v => set('areasUpdate', v)} orientation="horizontal">
+          <RadioButtonGroup legendText="Identified/Declared Area Changes" name="areasUpdate" valueSelected={form.areasUpdate} onChange={v => set('areasUpdate', v as string)} orientation="horizontal">
             <RadioButton labelText="Yes" value="Y" id="areasY" />
             <RadioButton labelText="No"  value="N" id="areasN" />
           </RadioButtonGroup>
-          <RadioButtonGroup legendText="Stocking Standard Changes" name="stockingUpdate" valueSelected={form.stockingUpdate} onChange={v => set('stockingUpdate', v)} orientation="horizontal">
+          <RadioButtonGroup legendText="Stocking Standard Changes" name="stockingUpdate" valueSelected={form.stockingUpdate} onChange={v => set('stockingUpdate', v as string)} orientation="horizontal">
             <RadioButton labelText="Yes" value="Y" id="stockY" />
             <RadioButton labelText="No"  value="N" id="stockN" />
           </RadioButtonGroup>
@@ -37,7 +45,7 @@ export default function AmendInformationPage() {
 
       <div className="form-section">
         <div className="form-section__title">Does this amendment require approval?</div>
-        <RadioButtonGroup legendText="Approval Required" name="approvalRequired" valueSelected={form.approvalRequired} onChange={v => set('approvalRequired', v)} orientation="horizontal">
+        <RadioButtonGroup legendText="Approval Required" name="approvalRequired" valueSelected={form.approvalRequired} onChange={v => set('approvalRequired', v as string)} orientation="horizontal">
           <RadioButton labelText="Yes" value="Y" id="appY" />
           <RadioButton labelText="No"  value="N" id="appN" />
         </RadioButtonGroup>

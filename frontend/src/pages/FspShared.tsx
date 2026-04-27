@@ -1,9 +1,24 @@
-import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './PageLayout.css';
 
+interface FspTombstoneProps {
+  fspId?: string;
+  amendNo?: string;
+  status?: string;
+  orgUnit?: string;
+  holder?: string;
+  expiryDate?: string;
+}
+
 // Tombstone bar shown at top of all FSP sub-pages
-export function FspTombstone({ fspId = '—', amendNo = '—', status = '—', orgUnit = '—', holder = '—', expiryDate = '—' }) {
+export function FspTombstone({
+  fspId = '—',
+  amendNo = '—',
+  status = '—',
+  orgUnit = '—',
+  holder = '—',
+  expiryDate = '—',
+}: FspTombstoneProps) {
   return (
     <div className="tombstone">
       <div className="tombstone__field"><span className="tombstone__label">FSP ID</span><span className="tombstone__value">{fspId}</span></div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   TextInput, Select, SelectItem, DatePicker, DatePickerInput,
   RadioButton, RadioButtonGroup, Button, TextArea, NumberInput,
@@ -15,8 +15,27 @@ const AMENDMENT_TYPES = [
   { value: 'EXT', label: 'Extension' },
 ];
 
+interface FspInfoForm {
+  fspId: string;
+  planName: string;
+  orgUnit: string;
+  holder: string;
+  holderName: string;
+  contactName: string;
+  phone: string;
+  email: string;
+  effectiveDate: string;
+  expiryDate: string;
+  termYears: string | number;
+  termMonths: string | number;
+  amendmentCode: string;
+  approvalRequired: string;
+  frpaObjectives: string;
+  additionalInfo: string;
+}
+
 export default function FspInformationPage() {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FspInfoForm>({
     fspId: '', planName: '', orgUnit: '', holder: '', holderName: '',
     contactName: '', phone: '', email: '',
     effectiveDate: '', expiryDate: '', termYears: '', termMonths: '',
@@ -24,7 +43,7 @@ export default function FspInformationPage() {
     frpaObjectives: '', additionalInfo: '',
   });
 
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const set = <K extends keyof FspInfoForm>(k: K, v: FspInfoForm[K]) => setForm(f => ({ ...f, [k]: v }));
 
   return (
     <PageLayout screenId="FSP300" title="FSP Information">
@@ -71,8 +90,8 @@ export default function FspInformationPage() {
           <DatePicker datePickerType="single" dateFormat="Y-m-d">
             <DatePickerInput id="expiryDate" labelText="Expiry Date (YYYY-MM-DD)" placeholder="YYYY-MM-DD" />
           </DatePicker>
-          <NumberInput id="termYears"  label="Term (Years)"  value={form.termYears}  onChange={(e, { value }) => set('termYears', value)}  min={0} max={99} />
-          <NumberInput id="termMonths" label="Term (Months)" value={form.termMonths} onChange={(e, { value }) => set('termMonths', value)} min={0} max={11} />
+          <NumberInput id="termYears"  label="Term (Years)"  value={form.termYears as number}  onChange={(_e, { value }) => set('termYears', value)}  min={0} max={99} />
+          <NumberInput id="termMonths" label="Term (Months)" value={form.termMonths as number} onChange={(_e, { value }) => set('termMonths', value)} min={0} max={11} />
         </div>
       </div>
 
@@ -83,7 +102,7 @@ export default function FspInformationPage() {
           legendText="Approval Required"
           name="approvalRequired"
           valueSelected={form.approvalRequired}
-          onChange={v => set('approvalRequired', v)}
+          onChange={v => set('approvalRequired', v as string)}
         >
           <RadioButton labelText="Yes" value="Y" id="approvalY" />
           <RadioButton labelText="No"  value="N" id="approvalN" />

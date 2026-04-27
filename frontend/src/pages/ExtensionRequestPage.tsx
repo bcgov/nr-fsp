@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { TextInput, NumberInput, DatePicker, DatePickerInput, TextArea, Button, FileUploader } from '@carbon/react';
 import { Save } from '@carbon/react/icons';
 import PageLayout from './PageLayout';
 import { FspTombstone, FspTabStrip } from './FspShared';
 import './PageLayout.css';
 
+interface ExtensionForm {
+  termYears: string | number;
+  termMonths: string | number;
+  newExpiryDate: string;
+  comments: string;
+}
+
 export default function ExtensionRequestPage() {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<ExtensionForm>({
     termYears: '', termMonths: '', newExpiryDate: '', comments: '',
   });
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const set = <K extends keyof ExtensionForm>(k: K, v: ExtensionForm[K]) => setForm(f => ({ ...f, [k]: v }));
 
   return (
     <PageLayout screenId="FSP302" title="Extension Request">
@@ -29,8 +36,8 @@ export default function ExtensionRequestPage() {
       <div className="form-section">
         <div className="form-section__title">New Extension</div>
         <div className="search-grid">
-          <NumberInput id="termYears"  label="New Term (Years)"  value={form.termYears}  onChange={(e, { value }) => set('termYears', value)}  min={0} max={99} />
-          <NumberInput id="termMonths" label="New Term (Months)" value={form.termMonths} onChange={(e, { value }) => set('termMonths', value)} min={0} max={11} />
+          <NumberInput id="termYears"  label="New Term (Years)"  value={form.termYears as number}  onChange={(_e, { value }) => set('termYears', value)}  min={0} max={99} />
+          <NumberInput id="termMonths" label="New Term (Months)" value={form.termMonths as number} onChange={(_e, { value }) => set('termMonths', value)} min={0} max={11} />
           <DatePicker datePickerType="single" dateFormat="Y-m-d">
             <DatePickerInput id="newExpiryDate" labelText="New FSP Expiry Date (YYYY-MM-DD)" placeholder="YYYY-MM-DD" />
           </DatePicker>

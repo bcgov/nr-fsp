@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
-import { TextInput, Button, DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '@carbon/react';
+import { useState } from 'react';
+import { TextInput, Button } from '@carbon/react';
 import { Map, TrashCan, Save } from '@carbon/react/icons';
 import PageLayout from './PageLayout';
 import { FspTombstone, FspTabStrip } from './FspShared';
 import './PageLayout.css';
 
-const MOCK_FDUS = [
+interface Fdu {
+  id: string;
+  name: string;
+  licences: string[];
+  hasMap: boolean;
+}
+
+const MOCK_FDUS: Fdu[] = [
   { id: 'FDU001', name: 'South Okanagan FDU', licences: ['A12345', 'A67890'], hasMap: true },
   { id: 'FDU002', name: 'North Okanagan FDU', licences: ['A11111'],            hasMap: true },
   { id: 'FDU003', name: 'East Kootenay FDU',  licences: [],                   hasMap: false },
 ];
 
 export default function FduMapPage() {
-  const [fdus] = useState(MOCK_FDUS);
+  const [fdus] = useState<Fdu[]>(MOCK_FDUS);
   const [newLicence, setNewLicence] = useState('');
 
   return (

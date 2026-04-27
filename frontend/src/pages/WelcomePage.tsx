@@ -1,9 +1,12 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import PageLayout from './PageLayout';
 import './PageLayout.css';
 
-export default function WelcomePage({ userName }) {
+interface WelcomePageProps {
+  userName?: string;
+}
+
+export default function WelcomePage({ userName }: WelcomePageProps) {
   const links = [
     { label: 'FSP Information Support Project', url: 'https://www.for.gov.bc.ca/his/fsp/' },
     { label: 'Forest and Range Practices Act', url: 'https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/02069_00' },

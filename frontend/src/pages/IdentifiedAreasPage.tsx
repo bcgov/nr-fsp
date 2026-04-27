@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
 import { Button, DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell, Tabs, Tab, TabList, TabPanels, TabPanel } from '@carbon/react';
 import { Map } from '@carbon/react/icons';
 import PageLayout from './PageLayout';
 import { FspTombstone, FspTabStrip } from './FspShared';
 import './PageLayout.css';
 
-const MOCK_FRPA = [
+interface AreaRow {
+  id: string;
+  name: string;
+  type: string;
+}
+
+const MOCK_FRPA: AreaRow[] = [
   { id: 'IA001', name: 'Riparian Management Area – South Creek',    type: 'FRPA 196(1)' },
   { id: 'IA002', name: 'Wildlife Habitat Area – Spotted Owl Zone',  type: 'FRPA 196(1)' },
 ];
 
-const MOCK_FPPR = [
+const MOCK_FPPR: AreaRow[] = [
   { id: 'IA003', name: 'Old Growth Management Area – Block 12',     type: 'FPPR' },
 ];
 
@@ -19,7 +24,7 @@ const HEADERS = [
   { key: 'type', header: 'Type' },
 ];
 
-function AreaTable({ rows }) {
+function AreaTable({ rows }: { rows: AreaRow[] }) {
   return (
     <DataTable rows={rows} headers={HEADERS}>
       {({ rows: tableRows, headers, getTableProps, getHeaderProps, getRowProps }) => (

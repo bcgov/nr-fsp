@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FileUploader, TextInput, Button, InlineNotification } from '@carbon/react';
 import { Upload } from '@carbon/react/icons';
 import PageLayout from './PageLayout';

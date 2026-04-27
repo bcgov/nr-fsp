@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button, DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell, Tag } from '@carbon/react';
 import { Add, Search } from '@carbon/react/icons';
 import PageLayout from './PageLayout';
 import { FspTombstone, FspTabStrip } from './FspShared';
 import './PageLayout.css';
 
-const MOCK_STANDARDS = [
+interface StockingStandard {
+  id: string;
+  name: string;
+  objective: string;
+  amendNo: string;
+  bgc: string;
+  status: string;
+  effectiveDate: string;
+  default: string;
+}
+
+const MOCK_STANDARDS: StockingStandard[] = [
   { id: 'SS001', name: 'Interior Douglas-fir', objective: 'Free Growing', amendNo: '0', bgc: 'IDFdk3', status: 'Approved', effectiveDate: '2023-04-01', default: 'Y' },
   { id: 'SS002', name: 'Lodgepole Pine Std',   objective: 'Regeneration',  amendNo: '1', bgc: 'SBSmc2', status: 'Draft',    effectiveDate: '—',          default: 'N' },
   { id: 'SS003', name: 'Mixed Conifer',         objective: 'Free Growing', amendNo: '0', bgc: 'ESSFmc', status: 'Approved', effectiveDate: '2023-04-01', default: 'N' },
@@ -23,7 +34,7 @@ const HEADERS = [
 ];
 
 export default function StockingStandardsPage() {
-  const [rows] = useState(MOCK_STANDARDS);
+  const [rows] = useState<StockingStandard[]>(MOCK_STANDARDS);
 
   return (
     <PageLayout screenId="FSP500" title="Stocking Standards">

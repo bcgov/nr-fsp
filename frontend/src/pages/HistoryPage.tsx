@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
-import { RadioButton, RadioButtonGroup, Checkbox, Button, DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '@carbon/react';
+import { useState } from 'react';
+import { RadioButton, RadioButtonGroup, Checkbox, DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '@carbon/react';
 import PageLayout from './PageLayout';
 import { FspTombstone, FspTabStrip } from './FspShared';
 import './PageLayout.css';
 
-const MOCK_HISTORY = [
+interface HistoryRow {
+  id: string;
+  amendNo: string;
+  extNo: string;
+  eventDate: string;
+  userId: string;
+  approvalReqd: boolean;
+  event: string;
+  description: string;
+  submissionId: string;
+}
+
+const MOCK_HISTORY: HistoryRow[] = [
   { id: '1', amendNo: '0', extNo: '—', eventDate: '2023-03-01 09:12', userId: 'jsmith',    approvalReqd: true,  event: 'Create',   description: 'FSP created',           submissionId: '' },
   { id: '2', amendNo: '0', extNo: '—', eventDate: '2023-03-15 14:30', userId: 'jsmith',    approvalReqd: true,  event: 'Submit',   description: 'FSP submitted for review', submissionId: 'SUB-0001' },
   { id: '3', amendNo: '0', extNo: '—', eventDate: '2023-04-01 10:00', userId: 'mbrown',    approvalReqd: true,  event: 'Approve',  description: 'Approved by DDM',       submissionId: '' },
@@ -23,7 +35,7 @@ const HEADERS = [
 ];
 
 export default function HistoryPage() {
-  const [sortOrder, setSortOrder] = useState('EVENT');
+  const [sortOrder, setSortOrder] = useState<string>('EVENT');
 
   return (
     <PageLayout screenId="FSP800" title="History">
@@ -31,7 +43,7 @@ export default function HistoryPage() {
       <FspTabStrip />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <RadioButtonGroup legendText="Sort By" name="sortOrder" valueSelected={sortOrder} onChange={setSortOrder} orientation="horizontal">
+        <RadioButtonGroup legendText="Sort By" name="sortOrder" valueSelected={sortOrder} onChange={v => setSortOrder(v as string)} orientation="horizontal">
           <RadioButton labelText="Event Date" value="EVENT" id="sortEvent" />
           <RadioButton labelText="Amendment Number" value="AMEND" id="sortAmend" />
         </RadioButtonGroup>

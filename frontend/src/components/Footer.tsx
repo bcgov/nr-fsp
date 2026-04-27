@@ -1,7 +1,11 @@
-import React from 'react';
 import './Footer.css';
 
-const footerLinks = [
+interface FooterLink {
+  label: string;
+  href: string;
+}
+
+const footerLinks: FooterLink[] = [
   { label: 'Home', href: '/' },
   { label: 'Disclaimer', href: 'https://www2.gov.bc.ca/gov/content/home/disclaimer' },
   { label: 'Privacy', href: 'https://www2.gov.bc.ca/gov/content/home/privacy' },
@@ -25,7 +29,7 @@ export default function Footer() {
               src="https://www2.gov.bc.ca/StaticWebResources/static/gov3/images/gov_bc_logo.png"
               alt="Government of British Columbia"
               className="bcgov-footer__logo"
-              onError={e => { e.target.style.display = 'none'; }}
+              onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
             />
           </div>
 

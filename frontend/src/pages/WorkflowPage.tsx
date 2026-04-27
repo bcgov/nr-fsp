@@ -1,24 +1,36 @@
-import React, { useState } from 'react';
-import { Checkbox, TextArea, Button, RadioButton, RadioButtonGroup, DatePicker, DatePickerInput } from '@carbon/react';
+import { useState } from 'react';
+import { Checkbox, TextArea, Button, RadioButton, RadioButtonGroup } from '@carbon/react';
 import { Save } from '@carbon/react/icons';
 import PageLayout from './PageLayout';
 import { FspTombstone, FspTabStrip } from './FspShared';
 import './PageLayout.css';
 
-const REVIEW_ITEMS = [
+interface ReviewItem {
+  key: string;
+  label: string;
+}
+
+interface ReviewState {
+  completed: boolean;
+  userId: string;
+  date: string;
+  comment: string;
+}
+
+const REVIEW_ITEMS: ReviewItem[] = [
   { key: 'fnr',  label: 'First Nations Review' },
   { key: 'rs',   label: 'Results & Strategies reviewed by C&E' },
   { key: 'oth',  label: 'Other Review Items' },
 ];
 
 export default function WorkflowPage() {
-  const [reviews, setReviews] = useState(
+  const [reviews, setReviews] = useState<Record<string, ReviewState>>(
     Object.fromEntries(REVIEW_ITEMS.map(r => [r.key, { completed: false, userId: '', date: '', comment: '' }]))
   );
   const [ddmDecision, setDdmDecision] = useState('');
   const [ddmComment, setDdmComment]   = useState('');
 
-  const setReview = (key, field, value) =>
+  const setReview = <K extends keyof ReviewState>(key: string, field: K, value: ReviewState[K]) =>
     setReviews(r => ({ ...r, [key]: { ...r[key], [field]: value } }));
 
   return (
@@ -78,7 +90,7 @@ export default function WorkflowPage() {
       {/* DDM Decision */}
       <div className="form-section">
         <div className="form-section__title">DDM Decision</div>
-        <RadioButtonGroup legendText="Decision" name="ddmDecision" valueSelected={ddmDecision} onChange={setDdmDecision} orientation="horizontal">
+        <RadioButtonGroup legendText="Decision" name="ddmDecision" valueSelected={ddmDecision} onChange={v => setDdmDecision(v as string)} orientation="horizontal">
           <RadioButton labelText="Approved"      value="APP" id="ddmApp" />
           <RadioButton labelText="Rejected"      value="REJ" id="ddmRej" />
           <RadioButton labelText="Clarification" value="CLR" id="ddmClr" />

@@ -1,16 +1,24 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { RadioButton, RadioButtonGroup, Checkbox, Button, TextArea } from '@carbon/react';
 import { Save, Reset } from '@carbon/react/icons';
 import PageLayout from './PageLayout';
 import { FspTombstone, FspTabStrip } from './FspShared';
 import './PageLayout.css';
 
+interface ReplaceForm {
+  fduUpdate: string;
+  areasUpdate: string;
+  stockingUpdate: string;
+  approvalRequired: boolean;
+  summaryOfChanges: string;
+}
+
 export default function ReplaceInformationPage() {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<ReplaceForm>({
     fduUpdate: 'N', areasUpdate: 'N', stockingUpdate: 'N',
     approvalRequired: false, summaryOfChanges: '',
   });
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const set = <K extends keyof ReplaceForm>(k: K, v: ReplaceForm[K]) => setForm(f => ({ ...f, [k]: v }));
 
   return (
     <PageLayout screenId="FSP304" title="Replacement Information">
@@ -20,13 +28,13 @@ export default function ReplaceInformationPage() {
       <div className="form-section">
         <div className="form-section__title">Does this replacement amendment change any of the following?</div>
         <div className="radio-stack">
-          <RadioButtonGroup legendText="FDU Changes" name="fduUpdate" valueSelected={form.fduUpdate} onChange={v => set('fduUpdate', v)} orientation="horizontal">
+          <RadioButtonGroup legendText="FDU Changes" name="fduUpdate" valueSelected={form.fduUpdate} onChange={v => set('fduUpdate', v as string)} orientation="horizontal">
             <RadioButton labelText="Yes" value="Y" id="rfduY" /><RadioButton labelText="No" value="N" id="rfduN" />
           </RadioButtonGroup>
-          <RadioButtonGroup legendText="Identified/Declared Area Changes" name="areasUpdate" valueSelected={form.areasUpdate} onChange={v => set('areasUpdate', v)} orientation="horizontal">
+          <RadioButtonGroup legendText="Identified/Declared Area Changes" name="areasUpdate" valueSelected={form.areasUpdate} onChange={v => set('areasUpdate', v as string)} orientation="horizontal">
             <RadioButton labelText="Yes" value="Y" id="rareasY" /><RadioButton labelText="No" value="N" id="rareasN" />
           </RadioButtonGroup>
-          <RadioButtonGroup legendText="Stocking Standard Changes" name="stockingUpdate" valueSelected={form.stockingUpdate} onChange={v => set('stockingUpdate', v)} orientation="horizontal">
+          <RadioButtonGroup legendText="Stocking Standard Changes" name="stockingUpdate" valueSelected={form.stockingUpdate} onChange={v => set('stockingUpdate', v as string)} orientation="horizontal">
             <RadioButton labelText="Yes" value="Y" id="rstockY" /><RadioButton labelText="No" value="N" id="rstockN" />
           </RadioButtonGroup>
         </div>

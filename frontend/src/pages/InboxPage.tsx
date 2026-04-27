@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   TextInput, Select, SelectItem, Button,
   DataTable, TableContainer, Table, TableHead, TableRow,
@@ -15,7 +15,18 @@ const STATUS_OPTIONS = [
   { value: 'DFT', label: 'Draft' },
 ];
 
-const MOCK_RESULTS = [
+interface InboxRow {
+  id: string;
+  amendNo: string;
+  extNo: string;
+  name: string;
+  status: string;
+  submitted: string;
+  submittedBy: string;
+  holder: string;
+}
+
+const MOCK_RESULTS: InboxRow[] = [
   { id: '10001', amendNo: '0', extNo: '—', name: 'Okanagan FSP 2023',  status: 'SUB', submitted: '2023-03-15', submittedBy: 'jsmith',   holder: 'Tolko Industries' },
   { id: '10002', amendNo: '1', extNo: '1', name: 'Skeena FSP 2022',    status: 'OHS', submitted: '2022-11-02', submittedBy: 'bwilliams', holder: 'Canfor Corporation' },
   { id: '10003', amendNo: '0', extNo: '—', name: 'Cariboo FSP 2021',   status: 'DFT', submitted: '—',          submittedBy: '—',         holder: 'West Fraser Mills' },
@@ -32,12 +43,22 @@ const HEADERS = [
   { key: 'holder',      header: 'Agreement Holder' },
 ];
 
-const STATUS_TAG = { SUB: 'blue', OHS: 'purple', DFT: 'gray' };
+const STATUS_TAG: Record<string, string> = { SUB: 'blue', OHS: 'purple', DFT: 'gray' };
+
+interface InboxForm {
+  orgUnit: string;
+  fspId: string;
+  fspName: string;
+  status: string;
+  holder: string;
+}
+
+const EMPTY_FORM: InboxForm = { orgUnit: '', fspId: '', fspName: '', status: '', holder: '' };
 
 export default function InboxPage() {
-  const [form, setForm]       = useState({ orgUnit: '', fspId: '', fspName: '', status: '', holder: '' });
-  const [results, setResults] = useState(null);
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const [form, setForm]       = useState<InboxForm>(EMPTY_FORM);
+  const [results, setResults] = useState<InboxRow[] | null>(null);
+  const set = <K extends keyof InboxForm>(k: K, v: InboxForm[K]) => setForm(f => ({ ...f, [k]: v }));
 
   return (
     <PageLayout screenId="FSP200" title="Inbox">
@@ -58,7 +79,7 @@ export default function InboxPage() {
         </div>
         <div className="form-actions">
           <Button kind="primary"   renderIcon={Search} onClick={() => setResults(MOCK_RESULTS)}>Search</Button>
-          <Button kind="secondary" onClick={() => { setForm({ orgUnit: '', fspId: '', fspName: '', status: '', holder: '' }); setResults(null); }}>Clear</Button>
+          <Button kind="secondary" onClick={() => { setForm(EMPTY_FORM); setResults(null); }}>Clear</Button>
         </div>
       </div>
 

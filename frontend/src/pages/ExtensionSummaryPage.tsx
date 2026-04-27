@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { TextInput, Button, DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell, Tag } from '@carbon/react';
 import PageLayout from './PageLayout';
 import { FspTombstone } from './FspShared';
 import './PageLayout.css';
 
-const MOCK_EXTENSIONS = [
+interface ExtensionRow {
+  id: string;
+  extNo: string;
+  requestDate: string;
+  status: string;
+  decisionDate: string;
+  term: string;
+  expiryDate: string;
+  effectiveDate: string;
+  amendNo: string;
+}
+
+const MOCK_EXTENSIONS: ExtensionRow[] = [
   { id: '1', extNo: '1', requestDate: '2024-01-10', status: 'APP', decisionDate: '2024-02-01', term: '2 yr 0 mo', expiryDate: '2030-03-31', effectiveDate: '2024-02-15', amendNo: '0' },
   { id: '2', extNo: '2', requestDate: '2025-03-05', status: 'SUB', decisionDate: '—',           term: '1 yr 6 mo', expiryDate: '—',          effectiveDate: '—',          amendNo: '1' },
 ];
@@ -22,7 +34,7 @@ const HEADERS = [
 
 export default function ExtensionSummaryPage() {
   const [fspId, setFspId] = useState('10001');
-  const [results, setResults] = useState(MOCK_EXTENSIONS);
+  const [results, setResults] = useState<ExtensionRow[] | null>(MOCK_EXTENSIONS);
 
   return (
     <PageLayout screenId="FSP303" title="Extension Summary">

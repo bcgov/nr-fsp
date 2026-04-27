@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Select, SelectItem, TextInput, Button, DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '@carbon/react';
 import { Save, TrashCan } from '@carbon/react/icons';
 import PageLayout from './PageLayout';
 import './PageLayout.css';
 
-const MOCK_DESIGNATES = [
+interface Designate {
+  id: string;
+  idir: string;
+  email: string;
+}
+
+const MOCK_DESIGNATES: Designate[] = [
   { id: '1', idir: 'jsmith',    email: 'john.smith@gov.bc.ca' },
   { id: '2', idir: 'mbrown',    email: 'mary.brown@gov.bc.ca' },
   { id: '3', idir: 'twilliams', email: 'tom.williams@gov.bc.ca' },
@@ -18,7 +24,7 @@ const HEADERS = [
 export default function DistrictNotificationPage() {
   const [district, setDistrict]   = useState('');
   const [newIdir,  setNewIdir]    = useState('');
-  const [results,  setResults]    = useState(null);
+  const [results,  setResults]    = useState<Designate[] | null>(null);
 
   return (
     <PageLayout screenId="FSP900" title="District Auto Notification">
