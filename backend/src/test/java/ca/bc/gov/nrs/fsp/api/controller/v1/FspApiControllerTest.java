@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -78,11 +77,10 @@ class FspApiControllerTest {
   }
 
   @Test
-  void getFspById_withValidScope_returns200() throws Exception {
+  void getFspById_authenticated_returns200() throws Exception {
     when(fspService.getById(1L)).thenReturn(fspRequest);
 
-    mockMvc.perform(get("/api/v1/fsp/1")
-            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_fsp:read"))))
+    mockMvc.perform(get("/api/v1/fsp/1").with(jwt()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.fspId").value(1))
         .andExpect(jsonPath("$.clientNumber").value("00123456"));
@@ -95,30 +93,23 @@ class FspApiControllerTest {
   }
 
   @Test
-  void getFspById_withWrongScope_returns403() throws Exception {
-    mockMvc.perform(get("/api/v1/fsp/1")
-            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_fsp:write"))))
-        .andExpect(status().isForbidden());
-  }
-
-  @Test
-  void searchFsp_withValidScope_returns200WithResults() throws Exception {
+  void searchFsp_authenticated_returns200WithResults() throws Exception {
     when(fspService.search(any(FspSearchRequest.class))).thenReturn(List.of(searchResult));
 
     mockMvc.perform(get("/api/v1/fsp/search")
             .param("clientNumber", "00123456")
-            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_fsp:read"))))
+            .with(jwt()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].fspId").value(1))
         .andExpect(jsonPath("$[0].clientNumber").value("00123456"));
   }
 
   @Test
-  void updateFsp_withWriteScope_returns200() throws Exception {
+  void updateFsp_authenticated_returns200() throws Exception {
     when(fspService.update(eq(1L), any(FspRequest.class))).thenReturn(fspRequest);
 
     mockMvc.perform(put("/api/v1/fsp/1")
-            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_fsp:write")))
+            .with(jwt())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(fspRequest)))
         .andExpect(status().isOk())
@@ -126,33 +117,23 @@ class FspApiControllerTest {
   }
 
   @Test
-  void updateFsp_withReadScopeOnly_returns403() throws Exception {
-    mockMvc.perform(put("/api/v1/fsp/1")
-            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_fsp:read")))
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(fspRequest)))
-        .andExpect(status().isForbidden());
-  }
-
-  @Test
   void getWorkflow_returns200WithWorkflowHistory() throws Exception {
     when(workflowService.getWorkflow(1L)).thenReturn(List.of(workflowResponse));
 
-    mockMvc.perform(get("/api/v1/fsp/1/workflow")
-            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_fsp:read"))))
+    mockMvc.perform(get("/api/v1/fsp/1/workflow").with(jwt()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].fspWorkflowId").value(10))
         .andExpect(jsonPath("$[0].workflowStatusCode").value("SUBMITTED"));
   }
 
   @Test
-  void submitWorkflowAction_withWriteScope_returns200() throws Exception {
+  void submitWorkflowAction_authenticated_returns200() throws Exception {
     WorkflowRequest request = new WorkflowRequest();
     request.setAction("SUBMIT");
     request.setComments("Ready for review");
 
     mockMvc.perform(post("/api/v1/fsp/1/workflow/action")
-            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_fsp:write")))
+            .with(jwt())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk());
@@ -168,17 +149,15 @@ class FspApiControllerTest {
     std.setSpeciesCode1("PL");
     when(standardsService.getByFspId(1L)).thenReturn(List.of(std));
 
-    mockMvc.perform(get("/api/v1/fsp/1/standards")
-            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_fsp:read"))))
+    mockMvc.perform(get("/api/v1/fsp/1/standards").with(jwt()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].bgcZoneCode").value("SBS"))
         .andExpect(jsonPath("$[0].speciesCode1").value("PL"));
   }
 
   @Test
-  void deleteStandard_withWriteScope_returns204() throws Exception {
-    mockMvc.perform(delete("/api/v1/fsp/1/standards/5")
-            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_fsp:write"))))
+  void deleteStandard_authenticated_returns204() throws Exception {
+    mockMvc.perform(delete("/api/v1/fsp/1/standards/5").with(jwt()))
         .andExpect(status().isNoContent());
 
     verify(standardsService).delete(5L);
@@ -190,8 +169,7 @@ class FspApiControllerTest {
         .fspAttachmentId(20L).fspId(1L).fileName("test-map.pdf").fileSize(1024L).build();
     when(attachmentsService.getByFspId(1L)).thenReturn(List.of(response));
 
-    mockMvc.perform(get("/api/v1/fsp/1/attachments")
-            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_fsp:read"))))
+    mockMvc.perform(get("/api/v1/fsp/1/attachments").with(jwt()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].fspAttachmentId").value(20))
         .andExpect(jsonPath("$[0].fileName").value("test-map.pdf"))
@@ -199,7 +177,7 @@ class FspApiControllerTest {
   }
 
   @Test
-  void uploadAttachment_withWriteScope_returns200() throws Exception {
+  void uploadAttachment_authenticated_returns200() throws Exception {
     MockMultipartFile file = new MockMultipartFile(
         "file", "test-map.pdf", "application/pdf", new byte[]{1, 2, 3}
     );
@@ -210,15 +188,14 @@ class FspApiControllerTest {
     mockMvc.perform(multipart("/api/v1/fsp/1/attachments")
             .file(file)
             .param("typeCode", "MAP")
-            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_fsp:write"))))
+            .with(jwt()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.fspAttachmentId").value(20));
   }
 
   @Test
-  void deleteAttachment_withWriteScope_returns204() throws Exception {
-    mockMvc.perform(delete("/api/v1/fsp/1/attachments/20")
-            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_fsp:write"))))
+  void deleteAttachment_authenticated_returns204() throws Exception {
+    mockMvc.perform(delete("/api/v1/fsp/1/attachments/20").with(jwt()))
         .andExpect(status().isNoContent());
 
     verify(attachmentsService).delete(1L, 20L);
@@ -228,8 +205,7 @@ class FspApiControllerTest {
   void getInbox_returns200() throws Exception {
     when(inboxService.getInboxForCurrentUser()).thenReturn(List.of(searchResult));
 
-    mockMvc.perform(get("/api/v1/fsp/inbox")
-            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_fsp:read"))))
+    mockMvc.perform(get("/api/v1/fsp/inbox").with(jwt()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].fspId").value(1));
   }
@@ -238,8 +214,7 @@ class FspApiControllerTest {
   void getHistory_returns200() throws Exception {
     when(historyService.getHistory(1L)).thenReturn(List.of(workflowResponse));
 
-    mockMvc.perform(get("/api/v1/fsp/1/history")
-            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_fsp:read"))))
+    mockMvc.perform(get("/api/v1/fsp/1/history").with(jwt()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].actionUserid").value("TESTUSER"));
   }
