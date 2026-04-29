@@ -24,7 +24,9 @@ public class FspApiController implements FspApiEndpoint {
     private final InboxService inboxService;
     private final HistoryService historyService;
 
-    public FspApiController(FspService fspService, WorkflowService workflowService, StandardsService standardsService, AttachmentsService attachmentsService, InboxService inboxService, HistoryService historyService) {
+    public FspApiController(FspService fspService, WorkflowService workflowService,
+                            StandardsService standardsService, AttachmentsService attachmentsService,
+                            InboxService inboxService, HistoryService historyService) {
         this.fspService = fspService;
         this.workflowService = workflowService;
         this.standardsService = standardsService;
@@ -41,24 +43,24 @@ public class FspApiController implements FspApiEndpoint {
     }
 
     @Override
-    public ResponseEntity<FspRequest> getFspById(Long fspId) {
+    public ResponseEntity<FspRequest> getFspById(String fspId) {
         return ResponseEntity.ok(fspService.getById(fspId));
     }
 
     @Override
-    public ResponseEntity<FspRequest> updateFsp(Long fspId, FspRequest fspRequest) {
+    public ResponseEntity<FspRequest> updateFsp(String fspId, FspRequest fspRequest) {
         return ResponseEntity.ok(fspService.update(fspId, fspRequest));
     }
 
     // --- Workflow ---
 
     @Override
-    public ResponseEntity<List<WorkflowResponse>> getWorkflow(Long fspId) {
+    public ResponseEntity<List<WorkflowResponse>> getWorkflow(String fspId) {
         return ResponseEntity.ok(workflowService.getWorkflow(fspId));
     }
 
     @Override
-    public ResponseEntity<Void> submitWorkflowAction(Long fspId, WorkflowRequest workflowRequest) {
+    public ResponseEntity<Void> submitWorkflowAction(String fspId, WorkflowRequest workflowRequest) {
         workflowService.submitAction(fspId, workflowRequest);
         return ResponseEntity.ok().build();
     }
@@ -66,18 +68,17 @@ public class FspApiController implements FspApiEndpoint {
     // --- Stocking Standards ---
 
     @Override
-    public ResponseEntity<List<StandardRequest>> getStandards(Long fspId) {
+    public ResponseEntity<List<StandardRequest>> getStandards(String fspId) {
         return ResponseEntity.ok(standardsService.getByFspId(fspId));
     }
 
     @Override
-    public ResponseEntity<List<StandardRequest>> saveStandards(
-            Long fspId, List<StandardRequest> standards) {
+    public ResponseEntity<List<StandardRequest>> saveStandards(String fspId, List<StandardRequest> standards) {
         return ResponseEntity.ok(standardsService.saveAll(fspId, standards));
     }
 
     @Override
-    public ResponseEntity<Void> deleteStandard(Long fspId, Long standardId) {
+    public ResponseEntity<Void> deleteStandard(String fspId, String standardId) {
         standardsService.delete(standardId);
         return ResponseEntity.noContent().build();
     }
@@ -85,28 +86,26 @@ public class FspApiController implements FspApiEndpoint {
     // --- Attachments ---
 
     @Override
-    public ResponseEntity<List<AttachmentResponse>> getAttachments(Long fspId) {
+    public ResponseEntity<List<AttachmentResponse>> getAttachments(String fspId) {
         return ResponseEntity.ok(attachmentsService.getByFspId(fspId));
     }
 
     @Override
-    public ResponseEntity<AttachmentResponse> uploadAttachment(
-            Long fspId, MultipartFile file, String typeCode) throws IOException {
+    public ResponseEntity<AttachmentResponse> uploadAttachment(String fspId, MultipartFile file, String typeCode) throws IOException {
         return ResponseEntity.ok(attachmentsService.upload(fspId, file, typeCode));
     }
 
     @Override
-    public ResponseEntity<byte[]> downloadAttachment(Long fspId, Long attachmentId) {
-        var attachment = attachmentsService.getAttachment(fspId, attachmentId);
+    public ResponseEntity<byte[]> downloadAttachment(String fspId, Long attachmentId) {
+        AttachmentBlob blob = attachmentsService.getAttachment(fspId, attachmentId);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + attachment.getFileName() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + blob.fileName() + "\"")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(attachment.getFileContent());
+                .body(blob.content());
     }
 
     @Override
-    public ResponseEntity<Void> deleteAttachment(Long fspId, Long attachmentId) {
+    public ResponseEntity<Void> deleteAttachment(String fspId, Long attachmentId) {
         attachmentsService.delete(fspId, attachmentId);
         return ResponseEntity.noContent().build();
     }
@@ -121,7 +120,7 @@ public class FspApiController implements FspApiEndpoint {
     // --- History ---
 
     @Override
-    public ResponseEntity<List<WorkflowResponse>> getHistory(Long fspId) {
+    public ResponseEntity<List<WorkflowResponse>> getHistory(String fspId) {
         return ResponseEntity.ok(historyService.getHistory(fspId));
     }
 }

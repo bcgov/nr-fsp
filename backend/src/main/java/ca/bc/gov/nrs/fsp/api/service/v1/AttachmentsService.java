@@ -1,9 +1,7 @@
 package ca.bc.gov.nrs.fsp.api.service.v1;
 
-import ca.bc.gov.nrs.fsp.api.model.v1.FspAttachment;
-import ca.bc.gov.nrs.fsp.api.exception.EntityNotFoundException;
-import ca.bc.gov.nrs.fsp.api.mapper.v1.FspMapper;
-import ca.bc.gov.nrs.fsp.api.repository.v1.FspAttachmentRepository;
+import ca.bc.gov.nrs.fsp.api.dao.v1.Fsp400AttachmentsDao;
+import ca.bc.gov.nrs.fsp.api.struct.v1.AttachmentBlob;
 import ca.bc.gov.nrs.fsp.api.struct.v1.AttachmentResponse;
 import ca.bc.gov.nrs.fsp.api.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
@@ -13,44 +11,90 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Wraps the FSP_400_ATTACHMENTS package. The legacy GET proc returns 9 distinct
+ * attachment-category cursors; this list endpoint flattens them into a single
+ * list as the simplest preservation of "all attachments for an FSP".
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AttachmentsService {
 
-  private final FspAttachmentRepository attachmentRepository;
-  private final FspMapper fspMapper;
+  private static final String ALL_ATTACHES_IND = "Y";
+  private static final String DEFAULT_AMENDMENT_NUMBER = "1";
+  private static final String DEFAULT_CONSOLIDATED_IND = "N";
 
-  public List<AttachmentResponse> getByFspId(Long fspId) {
-    return fspMapper.toAttachmentResponseList(attachmentRepository.findByFspId(fspId));
+  private final Fsp400AttachmentsDao attachmentsDao;
+
+  public List<AttachmentResponse> getByFspId(String fspId) {
+    Fsp400AttachmentsDao.GetResult get = attachmentsDao.get(
+        fspId,
+        "",                           // p_new_fsp_id
+        DEFAULT_AMENDMENT_NUMBER,
+        "",                           // p_new_fsp_amendment_number
+        "",                           // p_user_client_number
+        "",                           // p_user_role
+        ALL_ATTACHES_IND);
+    List<AttachmentResponse> all = new ArrayList<>();
+    appendAll(all, get.legalDocs());
+    appendAll(all, get.amendDesc());
+    appendAll(all, get.stockStandards());
+    appendAll(all, get.fduMap());
+    appendAll(all, get.identAreas1961());
+    appendAll(all, get.identAreas1962());
+    appendAll(all, get.declaredAreas());
+    appendAll(all, get.supportingDocs());
+    appendAll(all, get.ddmDecision());
+    return all;
   }
 
-  public FspAttachment getAttachment(Long fspId, Long attachmentId) {
-    return attachmentRepository.findById(attachmentId)
-        .filter(a -> a.getFspId().equals(fspId))
-        .orElseThrow(() -> new EntityNotFoundException(FspAttachment.class, "attachmentId", String.valueOf(attachmentId), "fspId", String.valueOf(fspId)));
+  public AttachmentBlob getAttachment(String fspId, Long attachmentId) {
+    Fsp400AttachmentsDao.AttachBlob blob = attachmentsDao.getAttachBlob(attachmentId);
+    return new AttachmentBlob(blob.fileName(), blob.content());
   }
 
   @Transactional
-  public AttachmentResponse upload(Long fspId, MultipartFile file, String typeCode)
+  public AttachmentResponse upload(String fspId, MultipartFile file, String typeCode)
       throws IOException {
-    FspAttachment attachment = new FspAttachment();
-    attachment.setFspId(fspId);
-    attachment.setAttachmentTypeCode(typeCode);
-    attachment.setFileName(file.getOriginalFilename());
-    attachment.setFileSize(file.getSize());
-    attachment.setFileContent(file.getBytes());
-    attachment.setEntryUserid(RequestUtil.getCurrentUserName());
-    attachment.setEntryTimestamp(LocalDateTime.now());
-    return fspMapper.toAttachmentResponse(attachmentRepository.save(attachment));
+    String userId = RequestUtil.getCurrentUserName();
+    Fsp400AttachmentsDao.CreateAttachmentResult created = attachmentsDao.createAttachment(
+        Long.valueOf(fspId),
+        DEFAULT_AMENDMENT_NUMBER,
+        typeCode,
+        file.getOriginalFilename(),
+        file.getSize(),
+        "",   // description
+        DEFAULT_CONSOLIDATED_IND,
+        userId);
+    attachmentsDao.saveAttachmentContent(created.createdAttachmentId(), file.getBytes());
+    return AttachmentResponse.builder()
+        .fspAttachmentId(String.valueOf(created.createdAttachmentId()))
+        .fspAmendmentNumber(DEFAULT_AMENDMENT_NUMBER)
+        .attachmentName(file.getOriginalFilename())
+        .attachmentSize(String.valueOf(file.getSize()))
+        .consolidatedInd(DEFAULT_CONSOLIDATED_IND)
+        .build();
   }
 
   @Transactional
-  public void delete(Long fspId, Long attachmentId) {
-    FspAttachment attachment = getAttachment(fspId, attachmentId);
-    attachmentRepository.delete(attachment);
+  public void delete(String fspId, Long attachmentId) {
+    attachmentsDao.removeAttachment(Long.valueOf(fspId), DEFAULT_AMENDMENT_NUMBER, attachmentId);
+  }
+
+  private static void appendAll(List<AttachmentResponse> sink, List<Fsp400AttachmentsDao.AttachmentRow> rows) {
+    for (Fsp400AttachmentsDao.AttachmentRow row : rows) {
+      sink.add(AttachmentResponse.builder()
+          .fspAttachmentId(row.fspAttachmentId())
+          .fspAmendmentNumber(row.fspAmendmentNumber())
+          .attachmentName(row.attachmentName())
+          .attachmentDescription(row.attachmentDescription())
+          .attachmentSize(row.attachmentSize())
+          .consolidatedInd(row.consolidatedInd())
+          .build());
+    }
   }
 }
