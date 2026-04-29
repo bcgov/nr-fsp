@@ -1,14 +1,14 @@
 package ca.bc.gov.nrs.fsp.api.struct.v1;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Mirrors the row shape of FSP_500_STOCKING_STANDARDS P_FSP_SS_RESULTS cursor.
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -16,31 +16,12 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class StandardRequest extends BaseRequest {
 
-  private Long fspStockingStandardId;
-
-  @Size(max = 4)
-  private String bgcZoneCode;
-
-  @Size(max = 4)
-  private String bgcSubzoneCode;
-
-  @Size(max = 3)
-  private String speciesCode1;
-
-  @Min(0) @Max(100)
-  private Integer speciesPct1;
-
-  @Size(max = 3)
-  private String speciesCode2;
-
-  @Min(0) @Max(100)
-  private Integer speciesPct2;
-
-  private Integer minWellSpacedTrees;
-  private Integer preferredWellSpacedTrees;
-  private Integer earliestFreeGrowingDate;
-  private Integer latestFreeGrowingDate;
-
-  @Size(max = 1)
-  private String defaultInd;
+  private String standardsRegimeId;
+  private String standardsRegimeName;
+  private String standardsObjective;
+  private String standardsAmndNumber;
+  private String standardsBgc;
+  private String standardsRegimeStatus;
+  private String standardsEffectiveDate;
+  private String defaultStandardInd;
 }

@@ -1,15 +1,16 @@
 package ca.bc.gov.nrs.fsp.api.struct.v1;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
-
+/**
+ * FSP detail (subset of fsp_300_information.MAINLINE INOUT params). Field names
+ * mirror the P_* parameters of the legacy package (lowercased). All values are
+ * VARCHAR in the source — kept as String here for fidelity.
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -17,24 +18,39 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 public class FspRequest extends BaseRequest {
 
-  private Long fspId;
-
-  @NotBlank(message = "Client number is required")
-  @Size(max = 10)
-  private String clientNumber;
-
-  @Size(max = 100)
-  private String clientName;
-
-  @NotBlank(message = "Status code is required")
-  @Size(max = 10)
+  private String fspId;
+  private String newFspId;
+  private String fspPlanName;
   private String fspStatusCode;
-
-  private Long orgUnitNo;
-
-  private LocalDate fspStartDate;
-
-  private LocalDate fspEndDate;
-
-  private Integer amendmentNumber;
+  private String fspStatusDesc;
+  private String fspAmendmentNumber;
+  private String newFspAmendmentNumber;
+  private String userClientNumber;
+  private String userRole;
+  private String submissionId;
+  private String fspExpiryDate;
+  private String amendmentName;
+  private String amendmentEfftvDate;
+  private String fspPlanStartDate;
+  private String fspPlanTermYears;
+  private String fspPlanTermMonths;
+  private String fspPlanEndDate;
+  private String fspPlanSubmissionDate;
+  private String fspContactName;
+  private String fspTelephoneNumber;
+  private String fspEmailAddress;
+  private String fduUpdateInd;
+  private String identifiedAreasUpdateInd;
+  private String stockingStandardUpdateInd;
+  private String approvalRequiredInd;
+  private String transitionInd;
+  private String frpa197electionInd;
+  private String amendmentAuthority;
+  private String amendmentReason;
+  private String fspRejectedByEsfInd;
+  private String fspUnapprovedAmendsInd;
+  private String fspExtensionStat;
+  private String fspAmendmentCode;
+  private String fspAmendmentDesc;
+  private String revisionCount;
 }

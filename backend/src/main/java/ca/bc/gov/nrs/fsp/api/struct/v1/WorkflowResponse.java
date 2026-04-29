@@ -5,19 +5,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
+/**
+ * Mirrors a row from the FSP_800_HISTORY P_FSP_SEARCH_RESULTS cursor. Used for
+ * both /workflow and /history endpoints — the workflow endpoint surfaces the
+ * audit trail of a single FSP, which the legacy app drives off the same cursor.
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class WorkflowResponse {
 
-  private Long fspWorkflowId;
-  private Long fspId;
-  private String workflowStatusCode;
-  private String workflowActionCode;
-  private String comments;
-  private String actionUserid;
-  private LocalDateTime actionTimestamp;
+  private String amendmentNumber;
+  private String extensionNumber;
+  private String eventDateTime;
+  private String userId;
+  private String event;
+  private String description;
+  private String approvalRequestIndicator;
+  private String submissionId;
 }
